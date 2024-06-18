@@ -16,9 +16,9 @@ public class ExecutionLogAsect {
     Object proceed = joinPoint.proceed();
     Long execTime = System.currentTimeMillis() - start;
     System.out.println(joinPoint.getSignature() + " execution time: " + execTime + "ms");
-    System.out.println(joinPoint.getSignature() + "input: " + joinPoint.getArgs()[0]);
-    System.out.println(joinPoint.getSignature() + "output: " + proceed);
-    System.out.println(joinPoint.getSignature() + "executed.");
+    System.out.println(joinPoint.getSignature() + " input: " + joinPoint.getArgs()[0]);
+    System.out.println(joinPoint.getSignature() + " output: " + proceed);
+    System.out.println(joinPoint.getSignature() + " executed.");
     System.out.println();
     return proceed;
   }

@@ -20,7 +20,7 @@ import com.usermicroservice.service.CustomUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig {
+public class UserSecurityConfig {
 
     @Autowired
     CustomUserDetailsService userDetailsService;
