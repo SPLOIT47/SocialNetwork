@@ -24,6 +24,8 @@ public class SocialMediaEntity {
   @OneToMany(mappedBy = "socialMediaEntity")
   List<CommentEntity> comment = new ArrayList<>();
   
+  String publisher;
+  
   String mediaContent;
 
   Long likes;

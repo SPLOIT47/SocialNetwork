@@ -1,6 +1,5 @@
 plugins {
 	id 'java'
-	id 'application'
 	id 'org.springframework.boot' version '3.3.0'
 	id 'io.spring.dependency-management' version '1.1.5'
 }
@@ -12,6 +11,10 @@ java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(21)
 	}
+}
+
+compileJava {
+    options.compilerArgs += ['-parameters']
 }
 
 repositories {
@@ -33,8 +36,10 @@ dependencies {
     implementation 'org.aspectj:aspectjrt:1.9.7'
     implementation 'org.aspectj:aspectjweaver:1.9.7'
     implementation name: 'DepsForSocialNetwork-1.0.0'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.17.1'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.mockito:mockito-core'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
@@ -45,6 +50,6 @@ dependencyManagement {
     }
 }
 
-application {
-    mainClassName = 'com.socialnetwork.usermicroservice.Main'
+test {
+    useJUnitPlatform()
 }

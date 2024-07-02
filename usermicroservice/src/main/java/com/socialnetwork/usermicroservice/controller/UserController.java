@@ -1,5 +1,7 @@
 package com.socialnetwork.usermicroservice.controller;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.annotation.ExecutionLog;
 import com.datatransferobject.UserDetailsDTO;
 import com.socialnetwork.usermicroservice.entity.CustomUserDetail;
 import com.socialnetwork.usermicroservice.entity.UserEntity;
@@ -24,11 +27,13 @@ public class UserController {
     @Autowired
     UserService userService;
 
-
-
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody UserEntity user) {
         try {
+            Optional<UserEntity> existingUser = userService.findByUsername(user.getUsername());
+            if (existingUser.isPresent()) {
+                return new ResponseEntity<>("Registration failed: User already exists", HttpStatus.BAD_REQUEST);
+            }        
             userService.registerUser(user, "ROLE_USER");
             return new ResponseEntity<>("User registered successfully", HttpStatus.CREATED);
         } catch (Exception e) {
@@ -61,6 +66,7 @@ public class UserController {
     }
 
     @PostMapping("/delete")
+    @ExecutionLog
     public ResponseEntity<String> deleteUser(@RequestBody UserEntity user) {
         try {
             userService.deleteUser(user);
@@ -71,9 +77,11 @@ public class UserController {
     }
 
     @GetMapping("/validateToken")
-    public ResponseEntity<?> validateToken(@RequestBody UserDetailsDTO object) {
-        HttpStatus status = userService.validateToken(username, token);
-        return new ResponseEntity<>(status);
-        
-    } 
+        public ResponseEntity<UserDetailsDTO> validateToken(@RequestParam String token, @RequestParam String username) {
+        UserDetailsDTO object = new UserDetailsDTO();
+        object.setToken(token);
+        object.setUsername(username);
+        HttpStatus status = userService.validateToken(object);
+        return ResponseEntity.status(status).body(object);
+    }
 }

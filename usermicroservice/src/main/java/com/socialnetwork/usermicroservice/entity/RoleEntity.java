@@ -5,6 +5,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -15,7 +17,7 @@ public class RoleEntity {
     private String name;
 
     @ManyToMany(mappedBy = "roles")
-    private Set<UserEntity> users;
+    private Set<UserEntity> users = new HashSet<>();
 
     public RoleEntity() {
     }

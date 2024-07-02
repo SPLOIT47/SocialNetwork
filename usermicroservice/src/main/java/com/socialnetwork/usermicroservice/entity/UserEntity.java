@@ -1,5 +1,6 @@
 package com.socialnetwork.usermicroservice.entity;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -21,12 +22,12 @@ public class UserEntity {
   @Column(nullable = false)
   String password;
 
-  @ManyToMany(fetch = FetchType.EAGER)
+  @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
       name = "user_roles", 
       joinColumns = @JoinColumn(name = "user_id"), 
       inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<RoleEntity> roles;
+    private Set<RoleEntity> roles = new HashSet<>();
 
   public UUID getId() {
     return id;

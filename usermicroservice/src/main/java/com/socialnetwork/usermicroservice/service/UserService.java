@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.annotation.ExecutionLog;
 import com.datatransferobject.UserDetailsDTO;
@@ -41,12 +42,15 @@ public class UserService {
 
   @Autowired
   JwtUtil jwtUtil;
-
+  
   @ExecutionLog
-  public UserEntity registerUser(UserEntity user, String roleTag) {
+  public UserEntity registerUser(UserEntity user, String roleTag) throws Exception {
     user.setPassword(passwordEncoder.encode(user.getPassword()));
-    
     RoleEntity role = roleRepository.findByName(roleTag);
+
+    if (role == null) {
+        throw new Exception("Role " + roleTag + " not found.");
+    }
 
     Set<RoleEntity> roles = user.getRoles();
     if (roles == null) {
@@ -58,42 +62,47 @@ public class UserService {
     return userRepository.save(user);
   }
 
+  public Optional<UserEntity> findByUsername(String username) {
+    return userRepository.findByUsername(username);
+  }
+
+  @Transactional
   @ExecutionLog
   public void deleteUser(UserEntity user) throws Exception {
-    if (!compareLogin(user)) {
+    UserEntity existingUser = userRepository.findByUsername(user.getUsername())
+      .orElseThrow(() -> new Exception("Wrong username or password"));
+
+    if (!passwordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
       throw new Exception("Wrong username or password");
     }
-    UserEntity existingUser = userRepository.findByUsername(user.getUsername()).get();
+
+    existingUser.getRoles().forEach(role -> role.getUsers().remove(existingUser));
+    existingUser.getRoles().clear();
+
     userRepository.deleteById(existingUser.getId());
   }
-
-  private boolean compareLogin(UserEntity user) {
-    Optional<UserEntity> existingOptionalUser = userRepository.findByUsername(user.getUsername());
-    if (!existingOptionalUser.isPresent()) {
-      return false;
-    }
-    UserEntity existingUser = existingOptionalUser.get();
-    return passwordEncoder.matches(user.getPassword(), existingUser.getPassword());
-  }
-
+  
   @ExecutionLog
-  public String authenticateUser(UserEntity user) {
-    authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
-    final UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
-    return jwtUtil.generateToken(userDetails);
-  }
+  public String authenticateUser(UserEntity user) throws Exception {
+    try {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
+        return jwtUtil.generateToken(userDetails);
+    } catch (Exception e) {
+        throw new Exception("Invalid username or password", e);
+    }
+}
 
   @ExecutionLog
   public HttpStatus validateToken(UserDetailsDTO object) {
     try {
-      String extractedUsername = jwtUtil.extractUsername();
-      if (!extractedUsername.equals(username)) {
-        return HttpStatus.BAD_REQUEST;
-      }
-      return HttpStatus.OK;
+        String extractedUsername = jwtUtil.extractUsername(object.getToken());
+        if (!extractedUsername.equals(object.getUsername())) {
+            return HttpStatus.UNAUTHORIZED;
+        }
+        return HttpStatus.OK;
     } catch (Exception e) {
-      return HttpStatus.BAD_REQUEST;
+        return HttpStatus.INTERNAL_SERVER_ERROR;
     }
-
-  } 
+  }
 }

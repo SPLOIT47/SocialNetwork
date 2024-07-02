@@ -6,6 +6,10 @@ public class UserDetailsDTO {
     private String password;
     private String[] authorities;
     private String token;
+    private String firstname;
+    private String secondname;
+    private String emnail;
+    private String phone;
     
     public String getUsername() {
       return username;
@@ -31,5 +35,30 @@ public class UserDetailsDTO {
     public void setToken(String token) {
       this.token = token;
     }
+    public String getFirstname() {
+      return firstname;
+    }
+    public void setFirstname(String firstname) {
+      this.firstname = firstname;
+    }
+    public String getSecondname() {
+      return secondname;
+    }
+    public void setSecondname(String secondname) {
+      this.secondname = secondname;
+    }
+    public String getEmnail() {
+      return emnail;
+    }
+    public void setEmnail(String emnail) {
+      this.emnail = emnail;
+    }
+    public String getPhone() {
+      return phone;
+    }
+    public void setPhone(String phone) {
+      this.phone = phone;
+    }
+    
   }
   

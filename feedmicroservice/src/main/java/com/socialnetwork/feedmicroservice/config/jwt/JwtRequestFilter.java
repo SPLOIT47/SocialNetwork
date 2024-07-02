@@ -1,14 +1,9 @@
 package com.socialnetwork.feedmicroservice.config.jwt;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -40,7 +35,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     
         String username = null;
         String jwtToken = null;
-    
+        
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             jwtToken = requestTokenHeader.substring(7);
             try {
@@ -58,12 +53,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             logger.info("Validating token with user service for user: " + username);
             UserDetailsDTO userDetailsDTO = userClient.validateToken(jwtToken, username);
             if (userDetailsDTO != null) {
-                List<GrantedAuthority> authorities = Arrays.stream(userDetailsDTO.getAuthorities())
-                        .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList());
+                // List<GrantedAuthority> authorities = Arrays.stream(userDetailsDTO.getAuthorities())
+                //         .map(SimpleGrantedAuthority::new)
+                //         .collect(Collectors.toList());
         
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                        userDetailsDTO, null, authorities);
+                        userDetailsDTO, null, null);
                 usernamePasswordAuthenticationToken
                         .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         
