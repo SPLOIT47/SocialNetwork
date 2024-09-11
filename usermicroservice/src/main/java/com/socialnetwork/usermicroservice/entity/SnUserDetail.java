@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Set;
 
-public class CustomUserDetail implements UserDetails {
+public class SNUserDetail implements UserDetails {
 
     private UserEntity user;
     private Set<GrantedAuthority> authorities;
