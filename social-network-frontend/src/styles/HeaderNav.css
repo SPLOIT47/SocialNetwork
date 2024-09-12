@@ -1,0 +1,95 @@
+.header-nav-container {
+    transform: translateZ(0);
+    border: none;
+}
+
+.header-nav {
+    display: flex;
+    position: relative;
+    background-color: #94A67C;
+    height: 65px;
+    width: 100%;
+}
+
+/* HeaderNavLogo styles */
+.header-nav-logo {
+    position: absolute;
+    margin-top: 20px;
+    margin-left: 30px;
+}
+
+.typography {
+    font-family: 'Times New Roman', Times, serif;
+    text-shadow: 3px 4px 3px;
+    color: white;
+    background-color: ;
+}
+
+/* HeaderNavSearch styles */
+
+.header-nav-search {
+    position: relative;
+    margin-left: 30%;
+    top: 10px;
+}
+
+.input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.hv-input-field {
+    width: 40vw;
+    height: 45px;
+    border: none;
+    border-radius: 10px;
+    padding-left: 30px;
+    background-color: #80916a;
+    color: white;
+}
+
+.hv-input-field:focus {
+    outline: none;
+}
+
+.icon {
+    position: absolute;
+    color: gray;
+    left: 10px;
+}
+
+/* HeaderNavNotification styles */
+
+.hv-notification-container {
+    position: absolute;
+    display: flex;
+    margin-left: 85%;
+    top: -20px;
+}
+
+.hv-notification-button {
+    position: relative;
+    background-color: transparent;
+    border: none;
+}
+
+.hv-notification-icon {
+    scale: 1.5;
+    color: white;
+    transition: transform 0.5s ease, color 0.5s ease;
+}
+
+.hv-notification-icon:hover {
+    transform: scale(1.2);
+    color: #e34040;
+}
+
+.hv-notification-menu-container {
+    position: absolute;
+    display: flex;
+    background-color: white;
+    top: 40px;
+    right: 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
