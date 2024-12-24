@@ -1,5 +1,5 @@
 import './App.css';
-import HeaderNav from './components/HeaderNav';
+import HeaderNav from './components/header-nav/HeaderNav';
 
 function App() {
   return (
