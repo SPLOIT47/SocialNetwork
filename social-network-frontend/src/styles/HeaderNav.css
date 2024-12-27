@@ -1,36 +1,38 @@
 .header-nav-container {
     transform: translateZ(0);
     border: none;
+    flex-wrap: nowrap;
 }
 
 .header-nav {
     display: flex;
-    position: relative;
-    background-color: #94A67C;
-    height: 65px;
+    position: absolute;
+    background-color: var(--header-background-color);
+    height:var(--header-height);
     width: 100%;
+    align-items: center;
 }
 
 /* HeaderNavLogo styles */
 .header-nav-logo {
-    position: absolute;
-    margin-top: 20px;
-    margin-left: 30px;
+    position: relative;
+    margin-left: var(--header-first-element);
+    white-space: nowrap;
 }
 
 .typography {
     font-family: 'Times New Roman', Times, serif;
     text-shadow: 3px 4px 3px;
     color: white;
-    background-color: ;
+    background-color: transparent;
 }
 
 /* HeaderNavSearch styles */
 
 .header-nav-search {
     position: relative;
-    margin-left: 30%;
-    top: 10px;
+    margin-left: var(--header-neighbor-element);
+    width: 200px;
 }
 
 .input-container {
@@ -45,7 +47,7 @@
     border: none;
     border-radius: 10px;
     padding-left: 30px;
-    background-color: #80916a;
+    background-color: var(--header--input-color);
     color: white;
 }
 
@@ -62,15 +64,24 @@
 /* HeaderNavNotification styles */
 
 .hv-notification-container {
-    position: absolute;
+    position: relative;
     display: flex;
-    margin-left: 85%;
-    top: -20px;
+    width: 30px;
+    margin-left: var(--header-neighbor-element);
+    height: var(--header-height);
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
 }
 
 .hv-notification-button {
     position: relative;
+    display: inline-flex;
     background-color: transparent;
+    width: fit-content;
+    height: fit-content;
+    padding: 5px;
+    border-radius: 50%;
     border: none;
 }
 
@@ -80,7 +91,7 @@
     transition: transform 0.5s ease, color 0.5s ease;
 }
 
-.hv-notification-icon:hover {
+.hv-notification-button:hover .hv-notification-icon:hover {
     transform: scale(1.2);
     color: #e34040;
 }
@@ -88,8 +99,10 @@
 .hv-notification-menu-container {
     position: absolute;
     display: flex;
+    top: var(--header-height);
     background-color: white;
-    top: 40px;
     right: 0;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+
+/* HeaderNavProfile styles */

@@ -3,6 +3,7 @@ import './../../styles/HeaderNav.css'
 import HeaderNavLogo from "./header-nav-components/HeaderNavLogo";
 import HeaderNavSearch from "./header-nav-components/HeaderNavSearch";
 import HeaderNavNotification from "./header-nav-components/HeaderNavNotification";
+import HeaderNavProfile from "./header-nav-components/HeaderNavProfile";
 
 const HeaderNav = () => {
     const [activeMenu, setActiveMenu] = React.useState(null);
@@ -18,7 +19,7 @@ const HeaderNav = () => {
                         <HeaderNavLogo/>
                         <HeaderNavSearch/>
                         <HeaderNavNotification activeMenu={activeMenu} toggleMenu={toggleMenu} />
-                        {/*<HeaderNavProfile activeMenu={activeMenu} toggleMenu={toggleMenu} />*/}
+                        <HeaderNavProfile activeMenu={activeMenu} toggleMenu={toggleMenu} />
                     </ul>
                 </header>
 

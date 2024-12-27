@@ -1,0 +1,9 @@
+header {
+    --header-height: 65px;
+    --header-width: 100%;
+    --header-background-color: #94A67C;
+    --header-neighbor-element: 15px;
+    --headder-further-element: 100px;
+    --header-first-element: 300px;
+    --header--input-color: #80916a;
+}
