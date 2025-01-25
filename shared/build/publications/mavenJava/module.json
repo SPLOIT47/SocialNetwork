@@ -1,0 +1,104 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.socialnetwork.shared",
+    "module": "deps",
+    "version": "1.0.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.10"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "files": [
+        {
+          "name": "deps-1.0.0.jar",
+          "url": "deps-1.0.0.jar",
+          "size": 8436,
+          "sha512": "263e4c3297218d0644c6650488425e780329e1c68e4f28141c125f8b8739d70e8b5112eb4f5c38738ff81b6df2acaa817779619f1230f5d36879970cc086266c",
+          "sha256": "0b6dca53c58422a80e21364ed13a5cfb11a8a351f1b6396c709f4975e8930198",
+          "sha1": "a8b0ee6bdf7c167ba612916efed6d7ffd33f42c0",
+          "md5": "cf1f625f1902da680878f2b8f257f04d"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "org.springframework",
+          "module": "spring-context",
+          "version": {
+            "requires": "5.3.20"
+          }
+        },
+        {
+          "group": "org.aspectj",
+          "module": "aspectjrt",
+          "version": {
+            "requires": "1.9.7"
+          }
+        },
+        {
+          "group": "org.springframework.boot",
+          "module": "spring-boot-starter-aop",
+          "version": {
+            "requires": "2.7.0"
+          }
+        },
+        {
+          "group": "com.fasterxml.jackson.core",
+          "module": "jackson-core",
+          "version": {
+            "requires": "2.17.1"
+          }
+        },
+        {
+          "group": "com.fasterxml.jackson.core",
+          "module": "jackson-databind",
+          "version": {
+            "requires": "2.17.1"
+          }
+        },
+        {
+          "group": "org.apache.kafka",
+          "module": "kafka-clients",
+          "version": {
+            "requires": "3.4.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "deps-1.0.0.jar",
+          "url": "deps-1.0.0.jar",
+          "size": 8436,
+          "sha512": "263e4c3297218d0644c6650488425e780329e1c68e4f28141c125f8b8739d70e8b5112eb4f5c38738ff81b6df2acaa817779619f1230f5d36879970cc086266c",
+          "sha256": "0b6dca53c58422a80e21364ed13a5cfb11a8a351f1b6396c709f4975e8930198",
+          "sha1": "a8b0ee6bdf7c167ba612916efed6d7ffd33f42c0",
+          "md5": "cf1f625f1902da680878f2b8f257f04d"
+        }
+      ]
+    }
+  ]
+}
