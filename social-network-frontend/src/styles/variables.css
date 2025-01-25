@@ -1,10 +1,9 @@
-:root {
-    --header-nav-height: 65px;
-    --header-nav-background-color: #94A67C;
-    --header-nav-search-color: #80916a;
-    --header-nav-element-color: white;
-}
-
-:root {
-    --element-select-color: rgb(128, 128, 128, 0.2);
+header {
+    --header-height: 65px;
+    --header-width: 100%;
+    --header-background-color: #94A67C;
+    --header-neighbor-element: 15px;
+    --headder-further-element: 100px;
+    --header-first-element: 300px;
+    --header--input-color: #80916a;
 }

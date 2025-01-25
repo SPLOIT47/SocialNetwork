@@ -3,3 +3,12 @@
 
 # Ignore Gradle build output directory
 build
+
+# Ignore environment files
+.env
+
+# Ignore all key files
+*.key
+
+# Ignore all files in the keys directory
+keys/

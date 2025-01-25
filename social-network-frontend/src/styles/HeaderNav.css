@@ -1,58 +1,44 @@
-.page-header-container {
-    transform: translateY(0);
+.header-nav-container {
+    transform: translateZ(0);
     border: none;
-}
-
-.page-header-wrapper {
-    direction: ltr;
-    height: inherit;
-}
-
-.page-header {
-    max-width: 100%;
+    flex-wrap: nowrap;
 }
 
 .header-nav {
     display: flex;
-    position: relative;
-    background-color: var(--header-nav-background-color);
-    height: var(--header-nav-height);
+    position: absolute;
+    background-color: var(--header-background-color);
+    height:var(--header-height);
     width: 100%;
-    margin: 0;
-    padding: 0;
-    list-style: none;
     align-items: center;
-    justify-content: space-between;
 }
 
 /* HeaderNavLogo styles */
 .header-nav-logo {
     position: relative;
-    display: flex;
-    margin-left: 50px;
+    margin-left: var(--header-first-element);
+    white-space: nowrap;
 }
 
 .typography {
     font-family: 'Times New Roman', Times, serif;
     text-shadow: 3px 4px 3px;
-    color: var(--header-nav-element-color);
+    color: white;
+    background-color: transparent;
 }
 
 /* HeaderNavSearch styles */
 
 .header-nav-search {
     position: relative;
-    flex-grow: 1;
-    margin-left: 20px;
-    margin-right: 20px;
-
+    margin-left: var(--header-neighbor-element);
+    width: 200px;
 }
 
 .input-container {
     position: relative;
     display: flex;
     align-items: center;
-    justify-content: center;
 }
 
 .hv-input-field {
@@ -61,8 +47,8 @@
     border: none;
     border-radius: 10px;
     padding-left: 30px;
-    background-color: var(--header-nav-search-color);
-    color: var(--header-nav-element-color);
+    background-color: var(--header--input-color);
+    color: white;
 }
 
 .hv-input-field:focus {
@@ -70,100 +56,53 @@
 }
 
 .icon {
-    position: inherit;
+    position: absolute;
     color: gray;
-    left: 25px;
+    left: 10px;
 }
 
 /* HeaderNavNotification styles */
 
 .hv-notification-container {
+    position: relative;
     display: flex;
+    width: 30px;
+    margin-left: var(--header-neighbor-element);
+    height: var(--header-height);
     align-items: center;
-    height: 100%;
+    justify-content: center;
+    background-color: transparent;
 }
 
 .hv-notification-button {
-    display: flex;
+    position: relative;
+    display: inline-flex;
     background-color: transparent;
+    width: fit-content;
+    height: fit-content;
+    padding: 5px;
+    border-radius: 50%;
     border: none;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    width: 65px;
 }
 
 .hv-notification-icon {
     scale: 1.5;
-    color: var(--header-nav-element-color);
+    color: white;
     transition: transform 0.5s ease, color 0.5s ease;
 }
 
-.hv-notification-button:hover {
-    background-color: var(--element-select-color);
+.hv-notification-button:hover .hv-notification-icon:hover {
+    transform: scale(1.2);
+    color: #e34040;
 }
 
 .hv-notification-menu-container {
     position: absolute;
     display: flex;
-    background-color: var(--header-nav-element-color);
-    top: var(--header-nav-height);
-    right: 215px;
-    width: 300px;
+    top: var(--header-height);
+    background-color: white;
+    right: 0;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    flex-direction: column;
-    align-items: flex-start;
 }
 
 /* HeaderNavProfile styles */
-
-.hv-profile-container {
-    display: flex;
-    margin-right: 150px;
-    align-items: center;
-    height: 100%;
-}
-
-.hv-profile-button {
-    display: flex;
-    border: none;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    width: 65px;
-    background-color: inherit;
-}
-
-.hv-profile-button:hover {
-    background-color: var(--element-select-color);
-}
-
-.image {
-    width: 55px;
-    height: 55px;
-    border-radius: 50%;
-}
-
-.hv-profile-menu-container {
-    position: absolute;
-    display: flex;
-    background-color: var(--header-nav-element-color);
-    top: var(--header-nav-height);
-    right: 150px;
-    width: 300px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.hv-profile-menu-button {
-    display: flex;
-    width: 100%;
-    height: 30px;
-    border: none;
-    align-items: center;
-}
-
-.hv-profile-menu-button:hover {
-    background-color: var(--element-select-color);
-}

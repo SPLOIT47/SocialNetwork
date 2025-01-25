@@ -1,5 +1,5 @@
 import React from 'react';
-import '../../../styles/HeaderNav.css'
+import './../../../styles/HeaderNav.css'
 
 
 const HeaderNavLogo = () => {

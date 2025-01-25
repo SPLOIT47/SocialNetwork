@@ -1,0 +1,9 @@
+services:
+  authentication-database:
+    ports:
+      - "55000:5432"
+    image: postgres:${DATABASE_VERSION}
+    environment:
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_DB=${DATABASE_NAME}
