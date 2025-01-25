@@ -1,0 +1,10 @@
+:root {
+    --header-nav-height: 65px;
+    --header-nav-background-color: #94A67C;
+    --header-nav-search-color: #80916a;
+    --header-nav-element-color: white;
+}
+
+:root {
+    --element-select-color: rgb(128, 128, 128, 0.2);
+}

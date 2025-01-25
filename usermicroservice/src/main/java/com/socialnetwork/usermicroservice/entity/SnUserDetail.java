@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Set;
 
-public class SNUserDetail implements UserDetails {
+public class SnUserDetail implements UserDetails {
 
     private UserEntity user;
     private Set<GrantedAuthority> authorities;
@@ -31,7 +31,7 @@ public class SNUserDetail implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return user.getNickname();
     }
 
     @Override

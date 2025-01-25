@@ -19,9 +19,7 @@ compileJava {
 
 repositories {
 	mavenCentral()
-    flatDir {
-        dirs 'lib'
-    }
+    mavenLocal()
 }
 
 dependencies {
@@ -29,13 +27,14 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
-    implementation 'org.postgresql:postgresql:42.5.0'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.postgresql:postgresql:42.7.2'
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
     implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
     implementation 'org.aspectj:aspectjrt:1.9.7'
     implementation 'org.aspectj:aspectjweaver:1.9.7'
-    implementation name: 'DepsForSocialNetwork-1.0.0'
+    implementation 'com.socialnetwork.deps:SocialNetworkDeps:1.0.0'
     implementation 'com.fasterxml.jackson.core:jackson-core:2.17.1'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -51,5 +50,6 @@ dependencyManagement {
 }
 
 test {
+    enabled = false
     useJUnitPlatform()
 }

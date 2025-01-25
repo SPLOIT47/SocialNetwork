@@ -42,7 +42,7 @@ public class UserControllerTest {
     @Test
     public void testRegisterUserSuccess() throws Exception {
         UserEntity user = new UserEntity();
-        user.setUsername("testuser");
+        user.setNickname("testuser");
         user.setPassword("password");
 
         String userJson = objectMapper.writeValueAsString(user);
@@ -58,12 +58,12 @@ public class UserControllerTest {
     @Test
     public void testRegisterUserFailure_UserExists() throws Exception {
         UserEntity existingUser = new UserEntity();
-        existingUser.setUsername("testuser");
+        existingUser.setNickname("testuser");
 
-        doReturn(Optional.of(existingUser)).when(userService).findByUsername("testuser");
+        doReturn(Optional.of(existingUser)).when(userService).findByLogin("testuser");
 
         UserEntity newUser = new UserEntity();
-        newUser.setUsername("testuser");
+        newUser.setNickname("testuser");
         newUser.setPassword("password");
 
         String userJson = objectMapper.writeValueAsString(newUser);
@@ -77,7 +77,7 @@ public class UserControllerTest {
     @Test
     public void testLoginSuccess() throws Exception {
         UserEntity user = new UserEntity();
-        user.setUsername("testuser");
+        user.setNickname("testuser");
         user.setPassword("password");
 
         mockMvc.perform(post("/users/login")

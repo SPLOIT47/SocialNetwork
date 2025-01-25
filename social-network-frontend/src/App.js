@@ -1,5 +1,6 @@
 import './App.css';
-import HeaderNav from './components/HeaderNav';
+import HeaderNav from './components/header-nav/HeaderNav';
+import PageLayout from "./components/main-page/PageLayout";
 
 function App() {
   return (
@@ -8,7 +9,7 @@ function App() {
             <HeaderNav/>
         </header>
         <main>
-
+            <PageLayout/>
         </main>
     </div>
   );

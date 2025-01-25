@@ -7,6 +7,6 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.socialnetwork.usermicroservice.entity.UserEntity;
 
-public interface UserRepository extends CrudRepository<UserEntity, UUID>{
-  Optional<UserEntity> findByUsername(String username); 
+public interface UserRepository extends CrudRepository<UserEntity, String> {
+    Optional<UserEntity> findByNickname(String username);
 }
