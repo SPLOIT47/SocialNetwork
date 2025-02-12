@@ -15,7 +15,9 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<JwtAuthenticationResponse> authenticate(@RequestBody SignInRequest request) {
-        return ResponseEntity.ok(new JwtAuthenticationResponse());
+        var response = new JwtAuthenticationResponse();
+        response.setToken("token");
+        return ResponseEntity.ok(response);
     }
 
     public ResponseEntity<?> unauthenticate(UserEvent user) {

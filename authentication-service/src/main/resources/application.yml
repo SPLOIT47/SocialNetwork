@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: auth-service
+  datasource:
+    url: jdbc:postgresql://${DATABASE_URL}
+    username: ${DATABASE_USER}
+    password: ${DATABASE_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  eureka:
+    client:
+      service-url:
+        defaultZone: http://localhost:8761
+  kafka:
+    bootstrap-servers:
+      localhost:29092
+jwt:
+  public-key-location:
+    classpath:keys/public.key
+  private-key-location:
+    classpath:keys/private.key
+server:
+  port: 8082

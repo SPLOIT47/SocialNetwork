@@ -1,6 +1,5 @@
 package com.socialnetwork.auth.util;
 
-import com.nimbusds.jwt.JWT;
 import com.socialnetwork.shared.dto.UserEvent;
 import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
 import org.springframework.security.oauth2.jwt.*;
@@ -19,7 +18,7 @@ public class JwtUtil {
     public String generateToken(UserEvent user) {
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("social-network")
-                .subject(user.getId().toString())
+                .subject(user.getUsername())
                 .claim(JwtClaimNames.EXP, Instant.now().plusSeconds(604800))
                 .build();
 

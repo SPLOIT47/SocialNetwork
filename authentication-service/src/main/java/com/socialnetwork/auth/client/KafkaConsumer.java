@@ -18,7 +18,7 @@ public class KafkaConsumer {
     @KafkaListener(topics = "Authenticate", groupId = "base")
     public void listen(UserEvent event) {
         switch (event.getType()) {
-            case LOGIN -> this.authController.authenticate(event);
+            case LOGIN -> this.authController.authenticate(null);
             case LOGOUT -> this.authController.unauthenticate(event);
             case REFRESH_TOKEN -> this.authController.refresh(event);
             default -> throw new IllegalStateException("Unexpected value: " + event.getType());

@@ -14,7 +14,7 @@ const AuthMenu = () => {
     }
 
     return (
-        <div>
+        <div className="login-container">
             <input
                 type="text"
                 placeholder="Username"
