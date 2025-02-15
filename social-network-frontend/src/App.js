@@ -1,7 +1,8 @@
 import './App.css';
 import HeaderNav from './components/header-nav/HeaderNav';
-import AuthMenu from "./components/auth-menu/AuthMenu";
+import LoginPage from "./components/auth/LoginPage";
 import {useEffect, useState} from "react";
+import AppRoutes from "./routes/AppRoutes";
 
 function App() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -22,7 +23,7 @@ function App() {
                {isAuthenticated ? <HeaderNav/> : null}
            </header>
            <main>
-               {isAuthenticated ? null : <AuthMenu/>}
+               <AppRoutes />
            </main>
        </div>
    );

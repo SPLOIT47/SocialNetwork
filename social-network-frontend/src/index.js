@@ -4,11 +4,12 @@ import './index.css';
 import App from './App';
 import './styles/HeaderNav.css';
 import './styles/variables.css';
+import {BrowserRouter} from "react-router-dom";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
+  <BrowserRouter>
     <App />
-  </React.StrictMode>
+  </BrowserRouter>
 );
 

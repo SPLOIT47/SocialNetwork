@@ -7,3 +7,9 @@ header {
     --header-first-element: 300px;
     --header--input-color: #80916a;
 }
+
+body {
+    --login-body-background-color: #EBF0E6;
+    --login-box-background-color: #a1b391;
+}
+

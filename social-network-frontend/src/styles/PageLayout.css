@@ -137,3 +137,21 @@
     height: inherit;
     border-radius: 15px;
 }
+
+
+.logout-button {
+    position: absolute;
+    top: 100px;
+    right: 10px;
+    background-color: #f44336;
+    color: black;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 9999;
+}
+
+.logout-button:hover {
+    background-color: #d32f2f;
+}

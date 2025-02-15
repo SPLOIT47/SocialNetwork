@@ -1,3 +1,63 @@
-.login-container {
+body {
+    background-color: var(--login-body-background-color);
+}
 
+.login-container {
+    display: flex;
+    position: absolute;
+    top: 25vh;
+    left: 40vw;
+    width: 300px;
+    height: 30vh;
+}
+
+.login-box {
+    background-color: var(--login-box-background-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+    border-radius: 10px;
+    padding: 40px;
+    box-shadow: 10px 10px 10px 10px rgba(0, 0, 0, 0.3);
+}
+
+.input {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 1em 0 1em 0;
+    max-width: 190px;
+    position: relative;
+}
+
+.input input {
+    font-size: 100%;
+    padding: 0.8em;
+    outline: none;
+    border: 2px solid rgb(141, 109, 255);
+    background-color: transparent;
+    border-radius: 20px;
+    width: 100%;
+}
+
+.input label {
+    font-size: 100%;
+    position: absolute;
+    left: 0;
+    padding: 0.8em;
+    margin-left: 0.5em;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    color: rgb(255, 255, 255);
+}
+
+.input :is(input:focus, input:valid)~label {
+    transform: translateY(-50%) scale(.9);
+    margin: 0 0 0 1.3em;
+    padding: 0.4em;
+    background-color: var(--login-box-background-color);
+}
+
+.inputGroup :is(input:focus, input:valid) {
+    border-color: rgb(37, 37, 211);
 }
