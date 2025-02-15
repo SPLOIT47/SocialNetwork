@@ -1,5 +1,6 @@
-#Vs code files
+#IDE files
 *.DS_Store
+.idea
 
 # Compiled class file
 *.class
@@ -27,3 +28,6 @@ replay_pid*
 
 #keys
 .env
+
+#Java files
+*.jar

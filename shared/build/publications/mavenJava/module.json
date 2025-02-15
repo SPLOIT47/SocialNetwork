@@ -1,7 +1,7 @@
 {
   "formatVersion": "1.1",
   "component": {
-    "group": "com.socialnetwork.shared",
+    "group": "com.sploit.socialnetwork.shared",
     "module": "deps",
     "version": "1.0.0",
     "attributes": {
@@ -27,11 +27,11 @@
         {
           "name": "deps-1.0.0.jar",
           "url": "deps-1.0.0.jar",
-          "size": 8376,
-          "sha512": "525c6eb4d10cb04e95aeb240c6e8d86caceb58c36c37e2181bb6a9caad73c9d9a3e356bfa8ca72614e6a10b77fc5b259e47328d9d1bb754dd1041adbd85b4f1d",
-          "sha256": "0812bafa555d34b6b6d8de3330089d7fe0682e20bc4254e8b91cd669ae695690",
-          "sha1": "b82586b9baaf15dfd30798258e4a19269e93d454",
-          "md5": "560aa2fe489da63820eaf06a2a67fafb"
+          "size": 13491,
+          "sha512": "9f2c444f19a251d6d9af35152db5ea82c6fcfdea06ae22b0a289e1004950791c6e337247a3cb292eef90ef8f44a75b78f6041ddbdf77a64e66ea8ddcd7c5beb3",
+          "sha256": "4e8f46ce15aad7153f44aeb1fa3ad6d06110ba807f8ba7245bfb275376c60308",
+          "sha1": "e9f5b6db833ae6f3c1591a13c8aba7ca5a6fe112",
+          "md5": "8bef571b66a00fed1a23af161007e31d"
         }
       ]
     },
@@ -46,10 +46,17 @@
       },
       "dependencies": [
         {
-          "group": "org.springframework",
-          "module": "spring-context",
+          "group": "jakarta.persistence",
+          "module": "jakarta.persistence-api",
           "version": {
-            "requires": "5.3.20"
+            "requires": "3.2.0"
+          }
+        },
+        {
+          "group": "jakarta.validation",
+          "module": "jakarta.validation-api",
+          "version": {
+            "requires": "3.1.0"
           }
         },
         {
@@ -57,13 +64,6 @@
           "module": "aspectjrt",
           "version": {
             "requires": "1.9.7"
-          }
-        },
-        {
-          "group": "org.springframework.boot",
-          "module": "spring-boot-starter-aop",
-          "version": {
-            "requires": "2.7.0"
           }
         },
         {
@@ -84,7 +84,7 @@
           "group": "org.apache.kafka",
           "module": "kafka-clients",
           "version": {
-            "requires": "3.4.0"
+            "requires": "3.9.0"
           }
         }
       ],
@@ -92,11 +92,11 @@
         {
           "name": "deps-1.0.0.jar",
           "url": "deps-1.0.0.jar",
-          "size": 8376,
-          "sha512": "525c6eb4d10cb04e95aeb240c6e8d86caceb58c36c37e2181bb6a9caad73c9d9a3e356bfa8ca72614e6a10b77fc5b259e47328d9d1bb754dd1041adbd85b4f1d",
-          "sha256": "0812bafa555d34b6b6d8de3330089d7fe0682e20bc4254e8b91cd669ae695690",
-          "sha1": "b82586b9baaf15dfd30798258e4a19269e93d454",
-          "md5": "560aa2fe489da63820eaf06a2a67fafb"
+          "size": 13491,
+          "sha512": "9f2c444f19a251d6d9af35152db5ea82c6fcfdea06ae22b0a289e1004950791c6e337247a3cb292eef90ef8f44a75b78f6041ddbdf77a64e66ea8ddcd7c5beb3",
+          "sha256": "4e8f46ce15aad7153f44aeb1fa3ad6d06110ba807f8ba7245bfb275376c60308",
+          "sha1": "e9f5b6db833ae6f3c1591a13c8aba7ca5a6fe112",
+          "md5": "8bef571b66a00fed1a23af161007e31d"
         }
       ]
     }

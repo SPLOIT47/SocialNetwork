@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata>
-  <groupId>com.socialnetwork.shared</groupId>
+  <groupId>com.sploit.socialnetwork.shared</groupId>
   <artifactId>deps</artifactId>
   <versioning>
     <latest>1.0.0</latest>
@@ -8,6 +8,6 @@
     <versions>
       <version>1.0.0</version>
     </versions>
-    <lastUpdated>20250210133820</lastUpdated>
+    <lastUpdated>20250213113345</lastUpdated>
   </versioning>
 </metadata>
