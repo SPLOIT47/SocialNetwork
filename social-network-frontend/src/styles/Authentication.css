@@ -21,6 +21,25 @@ body {
     box-shadow: 10px 10px 10px 10px rgba(0, 0, 0, 0.3);
 }
 
+.register-container {
+    display: flex;
+    position: absolute;
+    top: 25vh;
+    left: 40vw;
+}
+
+.register-box {
+    background-color: var(--login-box-background-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border-radius: 10px;
+    width: 300px;
+    height: 500px;
+    box-shadow: 10px 10px 10px 10px rgba(0, 0, 0, 0.3);
+}
+
 .input {
     font-family: 'Segoe UI', sans-serif;
     margin: 1em 0 0.5em 0;
