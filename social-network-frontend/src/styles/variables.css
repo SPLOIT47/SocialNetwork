@@ -11,5 +11,6 @@ header {
 body {
     --login-body-background-color: #EBF0E6;
     --login-box-background-color: #a1b391;
+    --login-border-color: rgb(141, 109, 255);
 }
 

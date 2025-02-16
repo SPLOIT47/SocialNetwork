@@ -1,7 +1,8 @@
 import {useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
+import {Navigate, useNavigate} from "react-router-dom";
 import '../../styles/Authentication.css'
 import  '../../styles/variables.css'
+import  '../../styles/Typography.css'
 
 const LoginPage = () => {
     const [username, setUsername] = useState("");
@@ -24,9 +25,14 @@ const LoginPage = () => {
         }
     }
 
+    const handleRegister = () => {
+        navigate('/register');
+    }
+
     return (
         <div className="login-container">
             <div className="login-box">
+                <label className="logo-font">SocialNetwork</label>
                 <div className="input">
                     <input
                         type="text"
@@ -49,7 +55,10 @@ const LoginPage = () => {
                     <label htmlFor="password">Password</label>
                 </div>
 
-                <button onClick={handleLogin}>Login</button>
+                <div className="btn-container">
+                    <button onClick={handleLogin} className="btn">Login</button>
+                    <button onClick={handleRegister} className="btn">Register</button>
+                </div>
             </div>
         </div>
     );

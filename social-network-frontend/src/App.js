@@ -20,7 +20,8 @@ function App() {
    return (
        <div className="App">
            <header>
-               {isAuthenticated ? <HeaderNav/> : null}
+               {/*{isAuthenticated ? <HeaderNav/> : null}*/}
+               <HeaderNav></HeaderNav>
            </header>
            <main>
                <AppRoutes />
