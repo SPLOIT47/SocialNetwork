@@ -1,0 +1,197 @@
+@startuml SocialNetwork_Database
+!define Table(x) class x << (T,#FFAAAA) >> 
+
+rectangle Users {
+    entity User {
+        *id: UUID <PK>  
+        username: varchar(20)   
+        email: varchar(254)
+        password: text
+        name: text
+        surname: text
+        bio: text
+        avatar: Media
+        date_of_birth: TIMESTAMP
+        status: Status
+        gender: Gender
+        registration_date: TIMESTAMP
+        last_login: TIMESTAMP
+        role: Role
+    }
+
+    enum Status {
+        normal
+        blocked
+    }
+
+    enum Gender {
+        male
+        female
+    }
+
+    enum Role { 
+        user
+        moderator
+        admin
+    }
+
+    Table(Friendship) {
+        *first_user_id: UUID <PK, FK>
+        *second_user_id: UUID <PK, FK>
+        friendship_date: TIMESTAMP
+    }
+
+    Table(Followers) { 
+        *follower_id: UUID <PK, FK>
+        *followee_id: UUID <PK, FK>
+        follow_date: TIMESTAMP
+    }
+}
+
+rectangle Posts {
+    Table(UserPosts) {
+        *user_id: UUID <PK, FK>
+        *post_id: UUID <PK, FK>
+    }
+    entity Post { 
+        *id: UUID <PK>
+        content: text
+        created_at: TIMESTAMP
+        updated_at: TIMESTAMP
+        visibility: Visibility
+    }
+
+    enum Visibility {
+        Global
+        FriendsOnly
+    }
+
+    entity Like { 
+        *id: UUID <PK>
+        post_id: UUID <FK>
+        user_id: UUID <FK>
+        created_at: TIMESTAMP
+    } 
+    entity Comment { 
+        *id: UUID <PK>
+        post_id: UUID <FK>
+        user_id: UUID <FK>
+        content: text
+        created_at: TIMESTAMP
+    }
+
+    Table(GroupPosts) {
+        *group_id: UUID <PK, FK>
+        *post_id: UUID <PK, FK>
+    }
+}
+
+rectangle Community {
+    entity Group {
+        *id: UUID <PK>
+        name: text
+        avatar_url: Media
+        description: text
+        created_at: TIMESTAMP
+    }
+
+    Table(Members) {
+        *group_id: UUID <PK, FK>
+        *user_id: UUID <PK, FK>
+        user_role: MemberRole
+    }
+
+    enum MemberRole {
+        user
+        moderator
+        owner
+    }
+}
+
+rectangle Notifications {
+
+    Table(UserNotifications) {
+        *user_id: UUID <PK, FK>
+        *notification_id <PK, FK>
+    }
+
+    entity Notification {
+        *id: UUID <PK>
+        context: text
+    }
+}
+
+rectangle Communication {
+    entity Message { }
+    entity GroupChat { }
+    entity Chat { }
+    entity ChatMember { }
+}
+
+
+
+rectangle Settings {
+    entity Settings { }
+}
+
+rectangle Content { 
+    entity Media {
+        *id: UUID <PK>
+        post_id: UUID <FK>
+        media_url: text
+        type: MediaType
+        created_at: TIMESTAMP
+    }
+
+    enum MediaType {
+        audio
+        video
+        image
+    }
+}
+
+rectangle Search { 
+    entity Tag { }
+    entity History { }
+}
+
+rectangle SystemEntity {
+    entity AuditLogs { }
+    entity Report { }
+}
+
+User }o--|| Status
+User }o--|| Gender
+User }o--|| Role
+User ||--o{ Followers : "follows"
+User }o--|| Followers : "followed by"
+User ||--o{ Friendship : "first user"
+User }o--|| Friendship : "second user"
+User ||--|| Media
+User ||--o{ Members
+User ||--o{ UserNotifications
+
+UserNotifications }o--|| Notification
+
+UserPosts }o--|| User
+UserPosts }o--|| Post
+
+Post }o--|| Visibility
+Post }o--|| Media
+Post ||--o{ GroupPosts
+
+Like }o--|| Post
+Like }o--|| User
+
+Comment }o--|| Post
+Comment }o--|| User
+
+Media }o--|| MediaType
+
+Group ||--o{ GroupPosts
+Group ||--|| Media
+Group ||--o{ Members
+
+Members }o--|| MemberRole
+
+@enduml
