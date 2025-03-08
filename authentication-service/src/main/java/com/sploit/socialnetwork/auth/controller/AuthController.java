@@ -3,6 +3,7 @@ package com.sploit.socialnetwork.auth.controller;
 import com.sploit.socialnetwork.auth.exception.TokenRefreshException;
 import com.sploit.socialnetwork.auth.models.RefreshToken;
 import com.sploit.socialnetwork.auth.models.Role;
+import com.sploit.socialnetwork.auth.models.Status;
 import com.sploit.socialnetwork.auth.models.User;
 import com.sploit.socialnetwork.auth.payload.request.SignInRequest;
 import com.sploit.socialnetwork.auth.payload.request.SignUpRequest;
@@ -32,9 +33,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.servlet.http.HttpServletRequest;
-import sploit.socialnetwork.shared.exception.InvalidRoleException;
-import sploit.socialnetwork.shared.models.ERole;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -80,8 +81,8 @@ public class AuthController {
                 .email(signUpRequest.getEmail())
                 .build();
 
-        Set<String> stringRoles = signUpRequest.getRoles();
-        Set<Role> roles = new HashSet<>();
+       Set<String> stringRoles = signUpRequest.getRoles();
+       Set<Role> roles = new HashSet<>();
 
         if (stringRoles == null) {
             Role role = roleRepository.findByName("ROLE_USER")
@@ -94,14 +95,15 @@ public class AuthController {
                             .orElseThrow(() -> new RuntimeException("Role not found: " + role));
                     roles.add(existingRole);
                 } catch (IllegalArgumentException e) {
-                    throw new InvalidRoleException(role);
+    //                    throw new InvalidRoleException(role);
                 }
             });
         }
 
+        user.setStatus(Status.DEFAULT);
         user.setRoles(roles);
+        user.setCreatedAt(Timestamp.from(Instant.now()));
         userRepository.save(user);
-
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(new MessageResponse("User registered successfully"));

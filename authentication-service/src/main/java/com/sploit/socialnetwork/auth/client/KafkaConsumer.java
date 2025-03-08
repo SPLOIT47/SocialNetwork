@@ -2,9 +2,7 @@ package com.sploit.socialnetwork.auth.client;
 
 import com.sploit.socialnetwork.auth.controller.AuthController;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
-import sploit.socialnetwork.shared.dto.UserEvent;
 
 @Service
 public class KafkaConsumer {
@@ -15,15 +13,15 @@ public class KafkaConsumer {
         this.authController = authController;
     }
 
-    @KafkaListener(topics = "Authenticate", groupId = "base")
-    public void listen(UserEvent event) {
+//    @KafkaListener(topics = "Authenticate", groupId = "base")
+//    public void listen(UserEvent event) {
 //        switch (event.getType()) {
 //            case LOGIN -> this.authController.authenticate(null);
 //            case LOGOUT -> this.authController.unauthenticate(event);
 //            case REFRESH_TOKEN -> this.authController.refresh(event);
 //            default -> throw new IllegalStateException("Unexpected value: " + event.getType());
 //        }
-    }
+//    }
 }
 
 

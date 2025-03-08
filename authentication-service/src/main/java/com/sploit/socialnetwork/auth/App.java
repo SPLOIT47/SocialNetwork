@@ -5,12 +5,14 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import java.util.Objects;
 
 @SpringBootApplication
 @EnableFeignClients
-@EntityScan("sploit.socialnetwork.shared.models")
+@EntityScan("com.sploit.socialnetwork.auth.models")
+@EnableJpaRepositories("com.sploit.socialnetwork.auth.repository")
 public class App {
     public static void main(String[] args) {
         Dotenv dotenv = Dotenv.load();

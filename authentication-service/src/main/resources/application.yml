@@ -10,10 +10,11 @@ spring:
     password: postgres
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
   eureka:
     client:
       service-url:
@@ -42,3 +43,7 @@ jwt:
     86400000
 server:
   port: 8082
+
+logging:
+  level:
+    hibernate: DEBUG

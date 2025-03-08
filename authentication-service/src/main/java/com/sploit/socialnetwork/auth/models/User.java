@@ -1,17 +1,14 @@
 package com.sploit.socialnetwork.auth.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import sploit.socialnetwork.shared.models.ERole;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
+import java.sql.Timestamp;
 import java.util.Set;
 import java.util.UUID;
 
@@ -20,16 +17,39 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "users")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
     private UUID id;
 
+    @Column(name = "username")
     private String username;
+
+    @Column(name = "password")
     private String password;
+
+    @Column(name = "email")
     private String email;
 
-
+    @ManyToMany
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
     private Set<Role> roles;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    @JdbcType(value = PostgreSQLEnumJdbcType.class)
+    private Status status;
+
+    @Column(name = "registration_date")
+    private Timestamp createdAt;
+
+    @Column(name = "last_login")
+    private Timestamp lastLogin;
 }

@@ -28,10 +28,10 @@
           "name": "deps-1.0.0.jar",
           "url": "deps-1.0.0.jar",
           "size": 13491,
-          "sha512": "9f2c444f19a251d6d9af35152db5ea82c6fcfdea06ae22b0a289e1004950791c6e337247a3cb292eef90ef8f44a75b78f6041ddbdf77a64e66ea8ddcd7c5beb3",
-          "sha256": "4e8f46ce15aad7153f44aeb1fa3ad6d06110ba807f8ba7245bfb275376c60308",
-          "sha1": "e9f5b6db833ae6f3c1591a13c8aba7ca5a6fe112",
-          "md5": "8bef571b66a00fed1a23af161007e31d"
+          "sha512": "557948b5258d4903f944f6ab56b5f6b6d047c606200fb2cd5e786225b1862212c1ee37b16de6957bbaeec0ba92e27d94e574c90f370aa01e0b6b499fe7e13d83",
+          "sha256": "ed31f6cb8d9c957982a727733527c85f353a2ef6ace38ac646f5318af2115f54",
+          "sha1": "7ab0dfad1fe46861bf2c2ef687bb1f3cbc9a99f6",
+          "md5": "27d59da11d6eda813eb5a6bb291b8a8e"
         }
       ]
     },
@@ -93,10 +93,10 @@
           "name": "deps-1.0.0.jar",
           "url": "deps-1.0.0.jar",
           "size": 13491,
-          "sha512": "9f2c444f19a251d6d9af35152db5ea82c6fcfdea06ae22b0a289e1004950791c6e337247a3cb292eef90ef8f44a75b78f6041ddbdf77a64e66ea8ddcd7c5beb3",
-          "sha256": "4e8f46ce15aad7153f44aeb1fa3ad6d06110ba807f8ba7245bfb275376c60308",
-          "sha1": "e9f5b6db833ae6f3c1591a13c8aba7ca5a6fe112",
-          "md5": "8bef571b66a00fed1a23af161007e31d"
+          "sha512": "557948b5258d4903f944f6ab56b5f6b6d047c606200fb2cd5e786225b1862212c1ee37b16de6957bbaeec0ba92e27d94e574c90f370aa01e0b6b499fe7e13d83",
+          "sha256": "ed31f6cb8d9c957982a727733527c85f353a2ef6ace38ac646f5318af2115f54",
+          "sha1": "7ab0dfad1fe46861bf2c2ef687bb1f3cbc9a99f6",
+          "md5": "27d59da11d6eda813eb5a6bb291b8a8e"
         }
       ]
     }
