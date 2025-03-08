@@ -1,13 +1,13 @@
 services:
-  authentication-database:
+  auth-database:
     ports:
-      - "55000:5432"
-    image: postgres:${DATABASE_VERSION}
+      - "55100:5432"
+    image: postgres:${POSTGRES_DATABASE_VERSION}
     environment:
-      - POSTGRES_USER=${DATABASE_USER}
-      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
-      - POSTGRES_DB=${DATABASE_NAME}
-  redis-storage:
+      - POSTGRES_USER=${POSTGRES_DATABASE_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_DATABASE_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DATABASE_NAME}
+  redis-database:
     ports:
       - "63791:6379"
-    image: redis:7.4
+    image: redis:${REDIS_DATABASE_VERSION}

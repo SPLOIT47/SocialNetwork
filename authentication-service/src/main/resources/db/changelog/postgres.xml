@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="0" author="sploit47">
+        <sql>
+            CREATE TYPE role AS ENUM (
+                'USER',
+                'ADMIN',
+                'MODERATOR'
+                );
+        </sql>
+    </changeSet>
+    
+    <changeSet id="1" author="sploit47">
+        <createTable tableName="roles" schemaName="public">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2" author="sploit47">
+        <sql>
+            INSERT INTO roles (name) VALUES ('USER'), ('ADMIN'), ('MODERATOR');
+        </sql>
+    </changeSet>
+
+    <changeSet id="3" author="sploit47">
+        <sql>
+            CREATE TYPE status AS ENUM (
+                'DEFAULT',
+                'BLOCKED'
+            )
+        </sql>
+    </changeSet>
+
+    <changeSet id="4" author="sploit47">
+        <createTable tableName="users" schemaName="public">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="username" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="status">
+                <constraints nullable="false"/>
+            </column>
+            <column name="registration_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_login" type="timestamp"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="5" author="sploit47">
+        <sql>
+            CREATE TABLE user_roles (
+                user_id UUID NOT NULL,
+                role_id UUID NOT NULL,
+                PRIMARY KEY (user_id, role_id)
+                FOREIGN KEY (user_id) REFERENCES users(id),
+                FOREIGN KEY (role_id) REFERENCES roles(id)
+            )
+        </sql>
+    </changeSet>
+</databaseChangeLog>

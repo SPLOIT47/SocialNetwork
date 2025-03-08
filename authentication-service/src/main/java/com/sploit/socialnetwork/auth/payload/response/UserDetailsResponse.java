@@ -1,11 +1,13 @@
 package com.sploit.socialnetwork.auth.payload.response;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
 import java.util.UUID;
 
 @Data
+@Builder
 public class UserDetailsResponse {
     private UUID id;
     private String username;

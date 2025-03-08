@@ -3,12 +3,14 @@ package com.sploit.socialnetwork.auth;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
 import java.util.Objects;
 
 @SpringBootApplication
 @EnableFeignClients
+@EntityScan("sploit.socialnetwork.shared.models")
 public class App {
     public static void main(String[] args) {
         Dotenv dotenv = Dotenv.load();

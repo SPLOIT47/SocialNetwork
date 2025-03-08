@@ -1,5 +1,6 @@
 package com.sploit.socialnetwork.auth.security.jwt;
 
+import com.sploit.socialnetwork.auth.models.User;
 import com.sploit.socialnetwork.auth.security.services.UserDetailsImpl;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -13,26 +14,27 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
+import org.springframework.stereotype.Component;
 import org.springframework.web.util.WebUtils;
-import sploit.socialnetwork.shared.models.User;
 
 import java.security.Key;
 import java.time.Instant;
 import java.util.Date;
 
 @Slf4j
+@Component
 public class JwtUtils {
 
-    @Value("jwt.jwt-secret")
+    @Value("${jwt.jwt-secret}")
     private String jwtSecret;
 
-    @Value("jwt.expiration-millis")
-    private int jwtExpirationMs;
+    @Value("${jwt.expiration-millis}")
+    private Long jwtExpirationMs;
 
-    @Value("jwt.cookie-name")
+    @Value("${jwt.cookie-name}")
     private String jwtCookie;
 
-    @Value("jwt.refresh-cookie-name")
+    @Value("${jwt.refresh-cookie-name}")
     private String jwtRefreshToken;
 
     public ResponseCookie generateJwtCookie(UserDetailsImpl userPrincipal) {
@@ -47,6 +49,10 @@ public class JwtUtils {
 
     public ResponseCookie generateRefreshJwtCookie(String refreshToken) {
         return generateCookie(jwtRefreshToken, refreshToken, "api/auth/refresh");
+    }
+
+    public String getJwtRefreshFromCookies(HttpServletRequest request) {
+        return getCookieValueByName(request, jwtRefreshToken);
     }
 
     public String getJwtFromCookie(HttpServletRequest request) {

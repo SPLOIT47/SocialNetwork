@@ -18,11 +18,5 @@ public class SignUpRequest {
     @NotBlank
     private String email;
 
-    @NotBlank
-    private String firstName;
-
-    @NotBlank
-    private String lastName;
-
     private Set<String> roles;
 }

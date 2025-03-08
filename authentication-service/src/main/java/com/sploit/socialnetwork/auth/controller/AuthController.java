@@ -1,20 +1,28 @@
 package com.sploit.socialnetwork.auth.controller;
 
-import com.sploit.socialnetwork.auth.dto.SignInRequest;
+import com.sploit.socialnetwork.auth.exception.TokenRefreshException;
+import com.sploit.socialnetwork.auth.models.RefreshToken;
+import com.sploit.socialnetwork.auth.models.Role;
+import com.sploit.socialnetwork.auth.models.User;
+import com.sploit.socialnetwork.auth.payload.request.SignInRequest;
 import com.sploit.socialnetwork.auth.payload.request.SignUpRequest;
 import com.sploit.socialnetwork.auth.payload.response.MessageResponse;
-import com.sploit.socialnetwork.auth.repository.RefreshTokenRepository;
+import com.sploit.socialnetwork.auth.payload.response.UserDetailsResponse;
 import com.sploit.socialnetwork.auth.repository.RoleRepository;
 import com.sploit.socialnetwork.auth.repository.UserRepository;
+import com.sploit.socialnetwork.auth.security.services.RefreshTokenService;
 import com.sploit.socialnetwork.auth.security.services.UserDetailsImpl;
 import com.sploit.socialnetwork.auth.security.jwt.JwtUtils;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -26,11 +34,12 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.servlet.http.HttpServletRequest;
 import sploit.socialnetwork.shared.exception.InvalidRoleException;
 import sploit.socialnetwork.shared.models.ERole;
-import sploit.socialnetwork.shared.models.Role;
-import sploit.socialnetwork.shared.models.User;
 
 import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -41,36 +50,33 @@ public class AuthController {
 
     private final UserRepository userRepository;
 
-    private final RefreshTokenRepository refreshTokenRepository;
-
     private final RoleRepository roleRepository;
 
     private final AuthenticationManager authenticationManager;
 
-    private final JwtUtils jwtUtil;
+    private final JwtUtils jwtUtils;
+
+    private final RefreshTokenService refreshTokenService;
 
     @Autowired
     public AuthController(PasswordEncoder passwordEncoder,
                           UserRepository userRepository,
-                          RefreshTokenRepository refreshTokenRepository,
                           RoleRepository roleRepository,
                           AuthenticationManager authenticationManager,
-                          JwtUtils jwtUtil) {
+                          JwtUtils jwtUtil, RefreshTokenService refreshTokenService) {
         this.encoder = passwordEncoder;
         this.userRepository = userRepository;
-        this.refreshTokenRepository = refreshTokenRepository;
         this.roleRepository = roleRepository;
         this.authenticationManager = authenticationManager;
-        this.jwtUtil = jwtUtil;
+        this.jwtUtils = jwtUtil;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@RequestBody SignUpRequest signUpRequest) {
-        User user = User.builder()
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
+       User user = User.builder()
                 .username(signUpRequest.getUsername())
                 .password(encoder.encode(signUpRequest.getPassword()))
-                .firstName(signUpRequest.getFirstName())
-                .lastName(signUpRequest.getLastName())
                 .email(signUpRequest.getEmail())
                 .build();
 
@@ -84,10 +90,9 @@ public class AuthController {
         } else {
             stringRoles.forEach(role -> {
                 try {
-                    ERole eRole = ERole.valueOf(role);
-                    Role rRole = roleRepository.findByName(eRole.toString())
-                            .orElseThrow(() -> new RuntimeException("Role not found: " + eRole.toString()));
-                    roles.add(rRole);
+                    Role existingRole = roleRepository.findByName(role)
+                            .orElseThrow(() -> new RuntimeException("Role not found: " + role));
+                    roles.add(existingRole);
                 } catch (IllegalArgumentException e) {
                     throw new InvalidRoleException(role);
                 }
@@ -96,13 +101,14 @@ public class AuthController {
 
         user.setRoles(roles);
         userRepository.save(user);
+
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(new MessageResponse("User registered successfully"));
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@RequestBody SignInRequest request) {
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody SignInRequest request) {
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), encoder.encode(request.getPassword())));
 
@@ -110,17 +116,65 @@ public class AuthController {
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-        ResponseCookie jwtCockie;
-        return null;
+        ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
+
+        List<String> roles = userDetails.getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .toList();
+
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
+        ResponseCookie responseCookie = jwtUtils.generateRefreshJwtCookie(refreshToken.getRefreshToken());
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
+                .body(UserDetailsResponse.builder()
+                        .id(userDetails.getId())
+                        .username(userDetails.getUsername())
+                        .roles(roles)
+                        .build()
+                );
     }
 
     @PostMapping("/signout")
     public ResponseEntity<?> logoutUser() {
-        return null;
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!Objects.equals(principal.toString(), "anonymousUser")) {
+            UUID id = ((UserDetailsImpl) principal).getId();
+            refreshTokenService.deleteByUserId(id);
+        }
+
+        ResponseCookie responseCookie = jwtUtils.getCleanJwtCookie();
+        ResponseCookie jwtRefreshCookie = jwtUtils.getCleanRefreshJwtCookie();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
+                .header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
+                .body(new MessageResponse("User logged out successfully"));
     }
 
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshtoken(HttpServletRequest request) {
-        return null;
+        String refreshToken = jwtUtils.getJwtRefreshFromCookies(request);
+
+        if ((refreshToken != null) && (!refreshToken.isEmpty())) {
+            return refreshTokenService.findByToken(refreshToken)
+                    .map(refreshTokenService::verifyExpiration)
+                    .map(RefreshToken::getUserId)
+                    .map(userId -> {
+                        User user = userRepository.findById(userId)
+                                .orElseThrow(() -> new RuntimeException("User not found"));
+
+                        ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(user);
+                        return ResponseEntity.ok()
+                                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                                .body(new MessageResponse("Token is refreshed successfully!"));
+                    })
+                    .orElseThrow(() -> new TokenRefreshException(refreshToken,
+                            "Refresh token is not in database!"));
+        }
+
+        return ResponseEntity.badRequest().body(new MessageResponse("Refresh Token is empty!"));
     }
 }

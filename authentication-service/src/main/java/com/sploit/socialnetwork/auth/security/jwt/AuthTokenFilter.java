@@ -1,6 +1,5 @@
 package com.sploit.socialnetwork.auth.security.jwt;
 
-import jakarta.inject.Inject;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,8 +9,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -24,7 +21,6 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
     private final UserDetailsService userDetailsService;
 
-    @Inject
     public AuthTokenFilter(JwtUtils jwtUtils, UserDetailsService userDetailsService) {
         this.jwtUtils = jwtUtils;
         this.userDetailsService = userDetailsService;
