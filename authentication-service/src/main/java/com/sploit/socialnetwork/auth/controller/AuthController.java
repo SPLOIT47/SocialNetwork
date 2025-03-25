@@ -95,7 +95,7 @@ public class AuthController {
                             .orElseThrow(() -> new RuntimeException("Role not found: " + role));
                     roles.add(existingRole);
                 } catch (IllegalArgumentException e) {
-    //                    throw new InvalidRoleException(role);
+                    throw new RuntimeException("Role not found: " + role);
                 }
             });
         }
@@ -112,7 +112,7 @@ public class AuthController {
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody SignInRequest request) {
         Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), encoder.encode(request.getPassword())));
+                .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 

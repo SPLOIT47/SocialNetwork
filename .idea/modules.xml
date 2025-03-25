@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/SocialNetwork.iml" filepath="$PROJECT_DIR$/.idea/SocialNetwork.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/authentication-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/authentication-service.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/shared.main.iml" filepath="$PROJECT_DIR$/.idea/modules/shared.main.iml" />
     </modules>
   </component>
 </project>

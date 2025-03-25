@@ -1,25 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel>
-      <module name="feedmicroservice" target="21" />
-      <module name="feedmicroservice.main" target="21" />
-      <module name="feedmicroservice.test" target="21" />
-      <module name="lib.main" target="21" />
-      <module name="lib.test" target="21" />
-      <module name="usermicroservice" target="21" />
-      <module name="usermicroservice.main" target="21" />
-      <module name="usermicroservice.test" target="21" />
-    </bytecodeTargetLevel>
-  </component>
-  <component name="JavacSettings">
-    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="authentication-service" options="-parameters" />
-      <module name="authentication-service.main" options="-parameters" />
-      <module name="authentication-service.test" options="-parameters" />
-      <module name="gateway" options="-parameters" />
-      <module name="gateway.main" options="-parameters" />
-      <module name="gateway.test" options="-parameters" />
-    </option>
+    <annotationProcessing>
+      <profile name="Gradle Imported" enabled="true">
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.36/5a30490a6e14977d97d9c73c924c1f1b5311ea95/lombok-1.18.36.jar" />
+        </processorPath>
+        <module name="authentication-service.main" />
+        <module name="authentication-service.test" />
+      </profile>
+    </annotationProcessing>
   </component>
 </project>
