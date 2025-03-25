@@ -128,6 +128,11 @@ public class AuthController {
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
         ResponseCookie responseCookie = jwtUtils.generateRefreshJwtCookie(refreshToken.getRefreshToken());
 
+        User user = userRepository.findByUsername(request.getUsername()).orElseThrow(() -> new RuntimeException("User not found"));
+        user.setLastLogin(Timestamp.from(Instant.now()));
+
+        userRepository.save(user);
+
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
                 .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
@@ -139,7 +144,6 @@ public class AuthController {
                 );
     }
 
-    //
     @PostMapping("/signout")
     public ResponseEntity<?> logoutUser() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -158,7 +162,7 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<?> refreshtoken(HttpServletRequest request) {
+    public ResponseEntity<?> refreshToken(HttpServletRequest request) {
         String refreshToken = jwtUtils.getJwtRefreshFromCookies(request);
 
         if ((refreshToken != null) && (!refreshToken.isEmpty())) {
