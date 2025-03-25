@@ -139,6 +139,7 @@ public class AuthController {
                 );
     }
 
+    //
     @PostMapping("/signout")
     public ResponseEntity<?> logoutUser() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
