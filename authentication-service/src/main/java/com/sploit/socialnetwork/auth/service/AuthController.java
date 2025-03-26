@@ -1,4 +1,4 @@
-package com.sploit.socialnetwork.auth.controller;
+package com.sploit.socialnetwork.auth.service;
 
 import com.sploit.socialnetwork.auth.exception.TokenRefreshException;
 import com.sploit.socialnetwork.auth.models.RefreshToken;
@@ -26,6 +26,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,9 +43,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
-@RestController
-@RequestMapping("/api/auth")
+@Service
 public class AuthController {
 
     private final PasswordEncoder encoder;
@@ -73,7 +72,6 @@ public class AuthController {
         this.refreshTokenService = refreshTokenService;
     }
 
-    @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
        User user = User.builder()
                 .username(signUpRequest.getUsername())
@@ -109,7 +107,6 @@ public class AuthController {
                 .body(new MessageResponse("User registered successfully"));
     }
 
-    @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody SignInRequest request) {
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
@@ -144,7 +141,6 @@ public class AuthController {
                 );
     }
 
-    @PostMapping("/signout")
     public ResponseEntity<?> logoutUser() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (!Objects.equals(principal.toString(), "anonymousUser")) {
@@ -161,7 +157,6 @@ public class AuthController {
                 .body(new MessageResponse("User logged out successfully"));
     }
 
-    @PostMapping("/refresh")
     public ResponseEntity<?> refreshToken(HttpServletRequest request) {
         String refreshToken = jwtUtils.getJwtRefreshFromCookies(request);
 
