@@ -27,11 +27,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -44,7 +40,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Service
-public class AuthController {
+public class AuthService {
 
     private final PasswordEncoder encoder;
 
@@ -59,11 +55,11 @@ public class AuthController {
     private final RefreshTokenService refreshTokenService;
 
     @Autowired
-    public AuthController(PasswordEncoder passwordEncoder,
-                          UserRepository userRepository,
-                          RoleRepository roleRepository,
-                          AuthenticationManager authenticationManager,
-                          JwtUtils jwtUtil, RefreshTokenService refreshTokenService) {
+    public AuthService(PasswordEncoder passwordEncoder,
+                       UserRepository userRepository,
+                       RoleRepository roleRepository,
+                       AuthenticationManager authenticationManager,
+                       JwtUtils jwtUtil, RefreshTokenService refreshTokenService) {
         this.encoder = passwordEncoder;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
@@ -82,21 +78,24 @@ public class AuthController {
        Set<String> stringRoles = signUpRequest.getRoles();
        Set<Role> roles = new HashSet<>();
 
-        if (stringRoles == null || stringRoles.isEmpty()) {
-            Role role = roleRepository.findByName("ROLE_USER")
-                    .orElseThrow(() -> new RuntimeException("Default role not found"));
-            roles.add(role);
-        } else {
-            stringRoles.forEach(role -> {
-                try {
-                    Role existingRole = roleRepository.findByName(role)
-                            .orElseThrow(() -> new RuntimeException("Role not found: " + role));
-                    roles.add(existingRole);
-                } catch (IllegalArgumentException e) {
-                    throw new RuntimeException("Role not found: " + role);
-                }
-            });
+        if (stringRoles == null) {
+            stringRoles = new HashSet<>();
         }
+        stringRoles.add("ROLE_USER");
+
+        stringRoles.forEach(role -> {
+            try {
+                Role existingRole = roleRepository.findByName(role)
+                        .orElseThrow(() -> new RuntimeException("Role not found: " + role));
+                roles.add(existingRole);
+            } catch (IllegalArgumentException e) {
+                throw new RuntimeException("Role not found: " + role);
+            }
+        });
+
+        if (roleRepository.findByName("ROLE_USER").isEmpty()) throw new RuntimeException("Role User not found");
+
+        roles.add(roleRepository.findByName("ROLE_USER").get());
 
         user.setStatus(Status.DEFAULT);
         user.setRoles(roles);
@@ -104,12 +103,21 @@ public class AuthController {
         userRepository.save(user);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(new MessageResponse("User registered successfully"));
+                .body("User registered successfully");
     }
 
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody SignInRequest request) {
+
+        String username = request.getUsername();
+
+        if (username == null) {
+            username = userRepository.findByEmail(request.getEmail())
+                    .orElseThrow()
+                    .getEmail();
+        }
+
         Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+                .authenticate(new UsernamePasswordAuthenticationToken(username, request.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 

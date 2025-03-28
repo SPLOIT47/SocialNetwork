@@ -79,3 +79,7 @@ liquibase {
         }
     }
 }
+
+tasks.test {
+    useJUnitPlatform()
+}
