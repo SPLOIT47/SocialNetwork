@@ -12,11 +12,17 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.WebUtils;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.time.Instant;
 import java.util.Date;
@@ -25,8 +31,8 @@ import java.util.Date;
 @Component
 public class JwtUtils {
 
-    @Value("${jwt.jwt-secret}")
-    private String jwtSecret;
+    @Value("${jwt.jwt-secret-location}")
+    private String jwtSecretLocation;
 
     @Value("${jwt.expiration-millis}")
     private Long jwtExpirationMs;
@@ -36,6 +42,9 @@ public class JwtUtils {
 
     @Value("${jwt.refresh-cookie-name}")
     private String jwtRefreshToken;
+
+    @Autowired
+    private ResourceLoader resourceLoader;
 
     public ResponseCookie generateJwtCookie(UserDetailsImpl userPrincipal) {
         String jwt = generateTokenFromUsername(userPrincipal.getUsername());
@@ -77,6 +86,14 @@ public class JwtUtils {
     }
 
     private Key key() {
+        Resource resource = resourceLoader.getResource(jwtSecretLocation);
+        String jwtSecret;
+        try (InputStream is = resource.getInputStream()) {
+            jwtSecret = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
     }
 
