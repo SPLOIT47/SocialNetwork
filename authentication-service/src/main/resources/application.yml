@@ -31,7 +31,7 @@ jwt:
     classpath:keys/public.key
   private-key-location:
     classpath:keys/private.key
-  jwt-secret:
+  jwt-secret-location:
     classpath:keys/jwtSecret.key
   expiration-millis:
     86400000
