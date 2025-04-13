@@ -65,11 +65,10 @@ public class AuthServiceTests {
         signUpRequest.setPassword("password");
         signUpRequest.setEmail("test@test.com");
 
-        ResponseEntity<?> response = authService.registerUser(signUpRequest);
+        String response = authService.registerUser(signUpRequest);
 
         assertNotNull(response);
-        assertTrue(response.hasBody());
-        assertEquals("User registered successfully", response.getBody());
+        assertEquals("User registered successfully", response);
     }
 
     @Test
@@ -84,11 +83,10 @@ public class AuthServiceTests {
 
         signUpRequest.setRoles(roles);
 
-        ResponseEntity<?> response = authService.registerUser(signUpRequest);
+        String response = authService.registerUser(signUpRequest);
 
         assertNotNull(response);
-        assertTrue(response.hasBody());
-        assertEquals("User registered successfully", response.getBody());
+        assertEquals("User registered successfully", response);
     }
 
     @Test
@@ -104,11 +102,10 @@ public class AuthServiceTests {
 
         signUpRequest.setRoles(roles);
 
-        ResponseEntity<?> response = authService.registerUser(signUpRequest);
+        String response = authService.registerUser(signUpRequest);
 
         assertNotNull(response);
-        assertTrue(response.hasBody());
-        assertEquals("User registered successfully", response.getBody());
+        assertEquals("User registered successfully", response);
     }
 
 
@@ -124,11 +121,10 @@ public class AuthServiceTests {
 
         signUpRequest.setRoles(roles);
 
-        ResponseEntity<?> response = authService.registerUser(signUpRequest);
+        String response = authService.registerUser(signUpRequest);
 
         assertNotNull(response);
-        assertTrue(response.hasBody());
-        assertEquals("User registered successfully", response.getBody());
+        assertEquals("User registered successfully", response);
     }
 
     @Test
@@ -144,11 +140,10 @@ public class AuthServiceTests {
 
         signUpRequest.setRoles(roles);
 
-        ResponseEntity<?> response = authService.registerUser(signUpRequest);
+        String response = authService.registerUser(signUpRequest);
 
         assertNotNull(response);
-        assertTrue(response.hasBody());
-        assertEquals("User registered successfully", response.getBody());
+        assertEquals("User registered successfully", response);
     }
 
     @Test

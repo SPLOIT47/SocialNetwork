@@ -68,7 +68,7 @@ public class AuthService {
         this.refreshTokenService = refreshTokenService;
     }
 
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
+    public String registerUser(@Valid SignUpRequest signUpRequest) {
        User user = User.builder()
                 .username(signUpRequest.getUsername())
                 .password(encoder.encode(signUpRequest.getPassword()))
@@ -93,7 +93,7 @@ public class AuthService {
             }
         });
 
-        if (roleRepository.findByName("ROLE_USER").isEmpty()) throw new RuntimeException("Role User not found");
+        if (roleRepository.findByName("ROLE_USER").isEmpty()) return "Role User not found";
 
         roles.add(roleRepository.findByName("ROLE_USER").get());
 
@@ -101,9 +101,7 @@ public class AuthService {
         user.setRoles(roles);
         user.setCreatedAt(Timestamp.from(Instant.now()));
         userRepository.save(user);
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body("User registered successfully");
+        return "User registered successfully";
     }
 
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody SignInRequest request) {
