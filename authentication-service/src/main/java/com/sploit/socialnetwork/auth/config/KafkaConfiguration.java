@@ -1,6 +1,6 @@
 package com.sploit.socialnetwork.auth.config;
 
-
+import com.sploit.socialnetwork.auth.payload.request.SignUpRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -11,12 +11,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
-import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
-import org.springframework.kafka.listener.ContainerProperties;
-import org.springframework.kafka.listener.MessageListener;
-import sploit.socialnetwork.shared.dto.UserEvent;
-import sploit.socialnetwork.shared.serializer.UserEventDeserializer;
-import sploit.socialnetwork.shared.serializer.UserEventSerializer;
+
+import org.springframework.kafka.support.serializer.JsonDeserializer;
+import org.springframework.kafka.support.serializer.JsonSerializer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,55 +24,37 @@ import java.util.Map;
 public class KafkaConfiguration {
 
     @Bean
-    public ProducerFactory<String, UserEvent> producerFactory() {
+    public ProducerFactory<String, Object> producerFactory() {
         Map<String, Object> config = new HashMap<>();
         // FIXME: use @Value for host && port
         config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, UserEventSerializer.class);
+        config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
         return new DefaultKafkaProducerFactory<>(config);
     }
 
     @Bean
-    public KafkaTemplate<String, UserEvent> kafkaTemplate() {
+    public KafkaTemplate<String, Object> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 
     @Bean
-    public ConsumerFactory<String, UserEvent> consumerFactory() {
-        return new DefaultKafkaConsumerFactory<>(consumerConfigs(), new StringDeserializer(), new UserEventDeserializer());
-    }
-
-    @Bean
-    public Map<String, Object> consumerConfigs() {
+    public ConsumerFactory<String, SignUpRequest> signUpRequestConsumerFactory() {
         Map<String, Object> config = new HashMap<>();
-        // FIXME: use @Value for host && port
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, UserEventDeserializer.class);
-        config.put(ConsumerConfig.GROUP_ID_CONFIG, "base");
-        return config;
+        config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+        config.put(JsonDeserializer.VALUE_DEFAULT_TYPE, SignUpRequest.class);
+        config.put(JsonDeserializer.TRUSTED_PACKAGES, "com.sploit.socialnetwork.auth.payload.request");
+        config.put(ConsumerConfig.GROUP_ID_CONFIG, "register");
+        return new DefaultKafkaConsumerFactory<>(config);
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, UserEvent> kafkaListenerContainerFactory(
-            ConsumerFactory<String, UserEvent> consumerFactory) {
-        ConcurrentKafkaListenerContainerFactory<String, UserEvent> factory
-                = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory);
+    public ConcurrentKafkaListenerContainerFactory<String, SignUpRequest> signUpRequestKafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, SignUpRequest> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(signUpRequestConsumerFactory());
         return factory;
     }
 
-    @Bean
-    public ConcurrentMessageListenerContainer<String, UserEvent> messageListenerContainer() {
-        ContainerProperties containerProperties = new ContainerProperties("Authenticate");
-        ConcurrentMessageListenerContainer<String, UserEvent> container =
-                new ConcurrentMessageListenerContainer<>(consumerFactory(), containerProperties);
-
-        container.setupMessageListener((MessageListener<String, UserEvent>) record -> {
-            log.info("Received message: {}", record.value());
-        });
-
-        return container;
-    }
 }

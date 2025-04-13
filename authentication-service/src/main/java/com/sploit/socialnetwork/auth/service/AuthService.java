@@ -27,6 +27,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -68,6 +69,7 @@ public class AuthService {
         this.refreshTokenService = refreshTokenService;
     }
 
+    @Transactional
     public String registerUser(@Valid SignUpRequest signUpRequest) {
        User user = User.builder()
                 .username(signUpRequest.getUsername())
@@ -104,6 +106,7 @@ public class AuthService {
         return "User registered successfully";
     }
 
+    @Transactional
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody SignInRequest request) {
 
         String username = request.getUsername();
@@ -147,6 +150,7 @@ public class AuthService {
                 );
     }
 
+    @Transactional
     public ResponseEntity<?> logoutUser() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (!Objects.equals(principal.toString(), "anonymousUser")) {
@@ -163,6 +167,7 @@ public class AuthService {
                 .body(new MessageResponse("User logged out successfully"));
     }
 
+    @Transactional
     public ResponseEntity<?> refreshToken(HttpServletRequest request) {
         String refreshToken = jwtUtils.getJwtRefreshFromCookies(request);
 
