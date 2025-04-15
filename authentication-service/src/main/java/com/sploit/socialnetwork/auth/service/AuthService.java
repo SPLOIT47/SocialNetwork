@@ -1,13 +1,20 @@
 package com.sploit.socialnetwork.auth.service;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sploit.socialnetwork.auth.exception.RoleNotFoundException;
 import com.sploit.socialnetwork.auth.exception.TokenRefreshException;
+import com.sploit.socialnetwork.auth.exception.UserNotFoundException;
 import com.sploit.socialnetwork.auth.models.RefreshToken;
 import com.sploit.socialnetwork.auth.models.Role;
 import com.sploit.socialnetwork.auth.models.Status;
 import com.sploit.socialnetwork.auth.models.User;
 import com.sploit.socialnetwork.auth.payload.request.SignInRequest;
 import com.sploit.socialnetwork.auth.payload.request.SignUpRequest;
+import com.sploit.socialnetwork.auth.payload.response.LoginResponse;
+import com.sploit.socialnetwork.auth.payload.response.LogoutResponse;
 import com.sploit.socialnetwork.auth.payload.response.MessageResponse;
+import com.sploit.socialnetwork.auth.payload.response.RefreshResponse;
 import com.sploit.socialnetwork.auth.payload.response.UserDetailsResponse;
 import com.sploit.socialnetwork.auth.repository.RoleRepository;
 import com.sploit.socialnetwork.auth.repository.UserRepository;
@@ -35,7 +42,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
@@ -60,7 +69,8 @@ public class AuthService {
                        UserRepository userRepository,
                        RoleRepository roleRepository,
                        AuthenticationManager authenticationManager,
-                       JwtUtils jwtUtil, RefreshTokenService refreshTokenService) {
+                       JwtUtils jwtUtil,
+                       RefreshTokenService refreshTokenService) {
         this.encoder = passwordEncoder;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
@@ -70,7 +80,7 @@ public class AuthService {
     }
 
     @Transactional
-    public String registerUser(@Valid SignUpRequest signUpRequest) {
+    public void registerUser(SignUpRequest signUpRequest) {
        User user = User.builder()
                 .username(signUpRequest.getUsername())
                 .password(encoder.encode(signUpRequest.getPassword()))
@@ -86,34 +96,28 @@ public class AuthService {
         stringRoles.add("ROLE_USER");
 
         stringRoles.forEach(role -> {
-            try {
-                Role existingRole = roleRepository.findByName(role)
-                        .orElseThrow(() -> new RuntimeException("Role not found: " + role));
-                roles.add(existingRole);
-            } catch (IllegalArgumentException e) {
-                throw new RuntimeException("Role not found: " + role);
-            }
+            Role existingRole = roleRepository.findByName(role)
+                    .orElseThrow(() -> new RoleNotFoundException(role));
+            roles.add(existingRole);
         });
 
-        if (roleRepository.findByName("ROLE_USER").isEmpty()) return "Role User not found";
-
-        roles.add(roleRepository.findByName("ROLE_USER").get());
+        roles.add(roleRepository.findByName("ROLE_USER")
+                .orElseThrow(() -> new RoleNotFoundException("ROLE_USER")));
 
         user.setStatus(Status.DEFAULT);
         user.setRoles(roles);
         user.setCreatedAt(Timestamp.from(Instant.now()));
         userRepository.save(user);
-        return "User registered successfully";
     }
 
     @Transactional
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody SignInRequest request) {
+    public LoginResponse authenticateUser(@Valid @RequestBody SignInRequest request) {
 
         String username = request.getUsername();
 
         if (username == null) {
             username = userRepository.findByEmail(request.getEmail())
-                    .orElseThrow()
+                    .orElseThrow(() -> new UserNotFoundException(request.getEmail()))
                     .getEmail();
         }
 
@@ -134,24 +138,23 @@ public class AuthService {
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
         ResponseCookie responseCookie = jwtUtils.generateRefreshJwtCookie(refreshToken.getRefreshToken());
 
-        User user = userRepository.findByUsername(request.getUsername()).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new UserNotFoundException(request.getUsername()));
         user.setLastLogin(Timestamp.from(Instant.now()));
 
         userRepository.save(user);
 
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-                .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
-                .body(UserDetailsResponse.builder()
-                        .id(userDetails.getId())
-                        .username(userDetails.getUsername())
-                        .roles(roles)
-                        .build()
-                );
+        return LoginResponse.builder()
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .roles(roles)
+                .jwtCookie(jwtCookie.toString())
+                .refreshCookie(responseCookie.toString())
+                .build();
     }
 
     @Transactional
-    public ResponseEntity<?> logoutUser() {
+    public LogoutResponse logoutUser() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (!Objects.equals(principal.toString(), "anonymousUser")) {
             UUID id = ((UserDetailsImpl) principal).getId();
@@ -161,14 +164,15 @@ public class AuthService {
         ResponseCookie responseCookie = jwtUtils.getCleanJwtCookie();
         ResponseCookie jwtRefreshCookie = jwtUtils.getCleanRefreshJwtCookie();
 
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
-                .header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
-                .body(new MessageResponse("User logged out successfully"));
+        return LogoutResponse.builder()
+                .message("User logged out successfully")
+                .cleanJwtCookie(responseCookie.toString())
+                .cleanRefreshCookie(jwtRefreshCookie.toString())
+                .build();
     }
 
     @Transactional
-    public ResponseEntity<?> refreshToken(HttpServletRequest request) {
+    public RefreshResponse refreshToken(HttpServletRequest request) {
         String refreshToken = jwtUtils.getJwtRefreshFromCookies(request);
 
         if ((refreshToken != null) && (!refreshToken.isEmpty())) {
@@ -177,17 +181,18 @@ public class AuthService {
                     .map(RefreshToken::getUserId)
                     .map(userId -> {
                         User user = userRepository.findById(userId)
-                                .orElseThrow(() -> new RuntimeException("User not found"));
+                                .orElseThrow(() -> new UserNotFoundException("Unknown user id: ", userId.toString()));
 
                         ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(user);
-                        return ResponseEntity.ok()
-                                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-                                .body(new MessageResponse("Token is refreshed successfully!"));
+                        return RefreshResponse.builder()
+                                .message("Token is refreshed successfully!")
+                                .jwtCookie(jwtCookie.toString())
+                                .build();
                     })
                     .orElseThrow(() -> new TokenRefreshException(refreshToken,
                             "Refresh token is not in database!"));
         }
 
-        return ResponseEntity.badRequest().body(new MessageResponse("Refresh Token is empty!"));
+        throw new TokenRefreshException("Refresh Token is empty!");
     }
 }
