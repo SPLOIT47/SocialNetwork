@@ -1,0 +1,17 @@
+name: Authentication service CI
+
+on:
+  push:
+    paths:
+      - authentication-service/**
+  pull_request:
+    paths:
+      - authentication-service/**
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build Authentication service
+        run: cd authentication-service && ./gradlew build
