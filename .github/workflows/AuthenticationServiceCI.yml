@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/setup-java@v3
         with:
-          distribution: 'termuin'
+          distribution: 'temurin'
           java-version: '21'
 
       - uses: actions/checkout@v3
