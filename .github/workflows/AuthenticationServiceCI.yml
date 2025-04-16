@@ -1,9 +1,6 @@
 name: Authentication service CI
 
 on:
-  push:
-    paths:
-      - authentication-service/**
   pull_request:
     paths:
       - authentication-service/**
@@ -13,5 +10,8 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
+        with:
+          distribution: 'termuin'
+          java-version: '21'
       - name: Build Authentication service
         run: cd authentication-service && ./gradlew build
