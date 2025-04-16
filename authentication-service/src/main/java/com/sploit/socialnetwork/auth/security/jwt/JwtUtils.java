@@ -26,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.time.Instant;
 import java.util.Date;
+import java.util.UUID;
 
 @Slf4j
 @Component
@@ -43,16 +44,20 @@ public class JwtUtils {
     @Value("${jwt.refresh-cookie-name}")
     private String jwtRefreshToken;
 
+    private final ResourceLoader resourceLoader;
+
     @Autowired
-    private ResourceLoader resourceLoader;
+    public JwtUtils(ResourceLoader resourceLoader) {
+        this.resourceLoader = resourceLoader;
+    }
 
     public ResponseCookie generateJwtCookie(UserDetailsImpl userPrincipal) {
-        String jwt = generateTokenFromUsername(userPrincipal.getUsername());
+        String jwt = generateTokenFromId(userPrincipal.getUsername());
         return generateCookie(jwtCookie, jwt, "/api");
     }
 
     public ResponseCookie generateJwtCookie(User user) {
-        String jwt = generateTokenFromUsername(user.getUsername());
+        String jwt = generateTokenFromId(user.getId().toString());
         return generateCookie(jwtCookie, jwt, "/api");
     }
 
@@ -94,6 +99,10 @@ public class JwtUtils {
             throw new RuntimeException(e);
         }
 
+        if (jwtSecret.isEmpty()) {
+            throw new RuntimeException("JWT Secret could not be found");
+        }
+
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
     }
 
@@ -114,9 +123,9 @@ public class JwtUtils {
         return false;
     }
 
-    public String generateTokenFromUsername(String username) {
+    public String generateTokenFromId(String id) {
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(id)
                 .setIssuedAt(Date.from(Instant.now()))
                 .setExpiration(new Date(new Date().getTime() + jwtExpirationMs))
                 .signWith(key(), SignatureAlgorithm.HS256)

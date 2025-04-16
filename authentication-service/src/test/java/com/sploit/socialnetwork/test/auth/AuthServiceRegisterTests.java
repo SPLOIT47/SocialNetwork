@@ -1,6 +1,11 @@
 package com.sploit.socialnetwork.test.auth;
 
+import com.sploit.socialnetwork.auth.client.KafkaProducer;
+import com.sploit.socialnetwork.auth.exception.RoleNotFoundException;
 import com.sploit.socialnetwork.auth.models.Role;
+import com.sploit.socialnetwork.auth.models.Status;
+import com.sploit.socialnetwork.auth.models.User;
+import com.sploit.socialnetwork.auth.payload.event.RegisterEvent;
 import com.sploit.socialnetwork.auth.payload.request.SignUpRequest;
 import com.sploit.socialnetwork.auth.repository.RoleRepository;
 import com.sploit.socialnetwork.auth.repository.UserRepository;
@@ -14,10 +19,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -25,7 +31,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-public class AuthServiceTests {
+public class AuthServiceRegisterTests {
 
     @InjectMocks
     private AuthService authService;
@@ -48,6 +54,9 @@ public class AuthServiceTests {
     @Mock
     private RefreshTokenService refreshTokenService;
 
+    @Mock
+    private KafkaProducer kafkaProducer;
+
     @BeforeEach
     public void setUp() {
         Mockito.lenient().when(roleRepository.findByName("ROLE_USER"))
@@ -61,14 +70,21 @@ public class AuthServiceTests {
     @Test
     public void RegisterUser_Success_IfRequestValidWithNoRoles() {
         SignUpRequest signUpRequest = new SignUpRequest();
-        signUpRequest.setUsername("test");
         signUpRequest.setPassword("password");
         signUpRequest.setEmail("test@test.com");
 
-        String response = authService.registerUser(signUpRequest);
+        User mockUser = User.builder()
+                .password("encodedPassword")
+                .email(signUpRequest.getEmail())
+                .roles(Set.of(new Role("ROLE_USER")))
+                .status(Status.DEFAULT)
+                .createdAt(Timestamp.from(Instant.now()))
+                .build();
 
-        assertNotNull(response);
-        assertEquals("User registered successfully", response);
+        Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(mockUser);
+        Mockito.doNothing().when(kafkaProducer).sendRegisterEvent(Mockito.any(RegisterEvent.class));
+
+        authService.registerUser(signUpRequest);
     }
 
     @Test
@@ -77,16 +93,22 @@ public class AuthServiceTests {
         roles.add("ROLE_ADMIN");
 
         SignUpRequest signUpRequest = new SignUpRequest();
-        signUpRequest.setUsername("test");
         signUpRequest.setPassword("password");
         signUpRequest.setEmail("test@test.com");
-
         signUpRequest.setRoles(roles);
 
-        String response = authService.registerUser(signUpRequest);
+        User mockUser = User.builder()
+                .password("encodedPassword")
+                .email(signUpRequest.getEmail())
+                .roles(Set.of(new Role("ROLE_USER")))
+                .status(Status.DEFAULT)
+                .createdAt(Timestamp.from(Instant.now()))
+                .build();
 
-        assertNotNull(response);
-        assertEquals("User registered successfully", response);
+        Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(mockUser);
+        Mockito.doNothing().when(kafkaProducer).sendRegisterEvent(Mockito.any(RegisterEvent.class));
+
+        authService.registerUser(signUpRequest);
     }
 
     @Test
@@ -96,16 +118,22 @@ public class AuthServiceTests {
         roles.add("ROLE_USER");
 
         SignUpRequest signUpRequest = new SignUpRequest();
-        signUpRequest.setUsername("test");
         signUpRequest.setPassword("password");
         signUpRequest.setEmail("test@test.com");
-
         signUpRequest.setRoles(roles);
 
-        String response = authService.registerUser(signUpRequest);
+        User mockUser = User.builder()
+                .password("encodedPassword")
+                .email(signUpRequest.getEmail())
+                .roles(Set.of(new Role("ROLE_USER")))
+                .status(Status.DEFAULT)
+                .createdAt(Timestamp.from(Instant.now()))
+                .build();
 
-        assertNotNull(response);
-        assertEquals("User registered successfully", response);
+        Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(mockUser);
+        Mockito.doNothing().when(kafkaProducer).sendRegisterEvent(Mockito.any(RegisterEvent.class));
+
+        authService.registerUser(signUpRequest);
     }
 
 
@@ -115,16 +143,22 @@ public class AuthServiceTests {
         roles.add("ROLE_MODERATOR");
 
         SignUpRequest signUpRequest = new SignUpRequest();
-        signUpRequest.setUsername("test");
         signUpRequest.setPassword("password");
         signUpRequest.setEmail("test@test.com");
-
         signUpRequest.setRoles(roles);
 
-        String response = authService.registerUser(signUpRequest);
+        User mockUser = User.builder()
+                .password("encodedPassword")
+                .email(signUpRequest.getEmail())
+                .roles(Set.of(new Role("ROLE_USER")))
+                .status(Status.DEFAULT)
+                .createdAt(Timestamp.from(Instant.now()))
+                .build();
 
-        assertNotNull(response);
-        assertEquals("User registered successfully", response);
+        Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(mockUser);
+        Mockito.doNothing().when(kafkaProducer).sendRegisterEvent(Mockito.any(RegisterEvent.class));
+
+        authService.registerUser(signUpRequest);
     }
 
     @Test
@@ -134,30 +168,34 @@ public class AuthServiceTests {
         roles.add("ROLE_USER");
 
         SignUpRequest signUpRequest = new SignUpRequest();
-        signUpRequest.setUsername("test");
         signUpRequest.setPassword("password");
         signUpRequest.setEmail("test@test.com");
-
         signUpRequest.setRoles(roles);
 
-        String response = authService.registerUser(signUpRequest);
+        User mockUser = User.builder()
+                .password("encodedPassword")
+                .email(signUpRequest.getEmail())
+                .roles(Set.of(new Role("ROLE_USER")))
+                .status(Status.DEFAULT)
+                .createdAt(Timestamp.from(Instant.now()))
+                .build();
 
-        assertNotNull(response);
-        assertEquals("User registered successfully", response);
+        Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(mockUser);
+        Mockito.doNothing().when(kafkaProducer).sendRegisterEvent(Mockito.any(RegisterEvent.class));
+
+        authService.registerUser(signUpRequest);
     }
 
     @Test
     public void RegisterUser_Success_IfRequestValidWithNoExistingRole() {
         Set<String> roles = new HashSet<>();
-        roles.add("ROLE_SOME_NOT_CORRECT_ROLE");
+        roles.add("SOME_NOT_CORRECT_ROLE");
 
         SignUpRequest signUpRequest = new SignUpRequest();
-        signUpRequest.setUsername("test");
         signUpRequest.setPassword("password");
         signUpRequest.setEmail("test@test.com");
-
         signUpRequest.setRoles(roles);
 
-        assertThrows(RuntimeException.class, () -> authService.registerUser(signUpRequest));
+        assertThrows(RoleNotFoundException.class, () -> authService.registerUser(signUpRequest));
     }
 }

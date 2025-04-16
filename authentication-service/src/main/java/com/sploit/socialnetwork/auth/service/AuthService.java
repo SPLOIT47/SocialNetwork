@@ -2,13 +2,17 @@ package com.sploit.socialnetwork.auth.service;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sploit.socialnetwork.auth.client.KafkaProducer;
+import com.sploit.socialnetwork.auth.exception.AccessException;
 import com.sploit.socialnetwork.auth.exception.RoleNotFoundException;
 import com.sploit.socialnetwork.auth.exception.TokenRefreshException;
+import com.sploit.socialnetwork.auth.exception.UnauthorizedException;
 import com.sploit.socialnetwork.auth.exception.UserNotFoundException;
 import com.sploit.socialnetwork.auth.models.RefreshToken;
 import com.sploit.socialnetwork.auth.models.Role;
 import com.sploit.socialnetwork.auth.models.Status;
 import com.sploit.socialnetwork.auth.models.User;
+import com.sploit.socialnetwork.auth.payload.event.RegisterEvent;
 import com.sploit.socialnetwork.auth.payload.request.SignInRequest;
 import com.sploit.socialnetwork.auth.payload.request.SignUpRequest;
 import com.sploit.socialnetwork.auth.payload.response.LoginResponse;
@@ -64,25 +68,28 @@ public class AuthService {
 
     private final RefreshTokenService refreshTokenService;
 
+    private final KafkaProducer kafkaProducer;
+
     @Autowired
     public AuthService(PasswordEncoder passwordEncoder,
                        UserRepository userRepository,
                        RoleRepository roleRepository,
                        AuthenticationManager authenticationManager,
                        JwtUtils jwtUtil,
-                       RefreshTokenService refreshTokenService) {
+                       RefreshTokenService refreshTokenService,
+                       KafkaProducer kafkaProducer) {
         this.encoder = passwordEncoder;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtil;
         this.refreshTokenService = refreshTokenService;
+        this.kafkaProducer = kafkaProducer;
     }
 
     @Transactional
     public void registerUser(SignUpRequest signUpRequest) {
        User user = User.builder()
-                .username(signUpRequest.getUsername())
                 .password(encoder.encode(signUpRequest.getPassword()))
                 .email(signUpRequest.getEmail())
                 .build();
@@ -93,7 +100,6 @@ public class AuthService {
         if (stringRoles == null) {
             stringRoles = new HashSet<>();
         }
-        stringRoles.add("ROLE_USER");
 
         stringRoles.forEach(role -> {
             Role existingRole = roleRepository.findByName(role)
@@ -107,22 +113,22 @@ public class AuthService {
         user.setStatus(Status.DEFAULT);
         user.setRoles(roles);
         user.setCreatedAt(Timestamp.from(Instant.now()));
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        RegisterEvent event = new RegisterEvent(savedUser.getId());
+        kafkaProducer.sendRegisterEvent(event);
     }
 
     @Transactional
     public LoginResponse authenticateUser(@Valid @RequestBody SignInRequest request) {
 
-        String username = request.getUsername();
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new UserNotFoundException(request.getEmail()));
 
-        if (username == null) {
-            username = userRepository.findByEmail(request.getEmail())
-                    .orElseThrow(() -> new UserNotFoundException(request.getEmail()))
-                    .getEmail();
-        }
+        if (user.getStatus().equals(Status.BLOCKED)) throw new AccessException(user.getId().toString());
 
         Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(username, request.getPassword()));
+                .authenticate(new UsernamePasswordAuthenticationToken(user.getId(), request.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -138,14 +144,11 @@ public class AuthService {
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
         ResponseCookie responseCookie = jwtUtils.generateRefreshJwtCookie(refreshToken.getRefreshToken());
 
-        User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new UserNotFoundException(request.getUsername()));
         user.setLastLogin(Timestamp.from(Instant.now()));
 
         userRepository.save(user);
 
         return LoginResponse.builder()
-                .username(user.getUsername())
                 .email(user.getEmail())
                 .roles(roles)
                 .jwtCookie(jwtCookie.toString())
@@ -156,10 +159,13 @@ public class AuthService {
     @Transactional
     public LogoutResponse logoutUser() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (!Objects.equals(principal.toString(), "anonymousUser")) {
-            UUID id = ((UserDetailsImpl) principal).getId();
-            refreshTokenService.deleteByUserId(id);
+
+        if ("anonymousUser".equals(principal.toString())) {
+            throw new UnauthorizedException("Anonymous user");
         }
+
+        UUID id = ((UserDetailsImpl) principal).getId();
+        refreshTokenService.deleteByUserId(id);
 
         ResponseCookie responseCookie = jwtUtils.getCleanJwtCookie();
         ResponseCookie jwtRefreshCookie = jwtUtils.getCleanRefreshJwtCookie();

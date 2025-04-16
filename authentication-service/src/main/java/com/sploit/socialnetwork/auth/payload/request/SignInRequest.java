@@ -1,13 +1,18 @@
 package com.sploit.socialnetwork.auth.payload.request;
 
-import com.sploit.socialnetwork.auth.annotation.OneNotBlank;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-@OneNotBlank(fields = {"username", "email"}, message = "username or email shouldn't be empty")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class SignInRequest {
-    private String username;
+
+    @NotBlank
     private String email;
 
     @NotBlank
