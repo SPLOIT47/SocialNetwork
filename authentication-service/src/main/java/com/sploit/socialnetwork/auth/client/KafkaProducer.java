@@ -11,6 +11,8 @@ public class KafkaProducer {
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     private static final String REGISTER_TOPIC = "user.registered";
+
+
     @Autowired
     public KafkaProducer(KafkaTemplate<String, Object> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;

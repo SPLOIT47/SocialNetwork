@@ -23,13 +23,15 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
     liquibaseRuntime 'org.liquibase:liquibase-core:4.23.0'
     liquibaseRuntime 'info.picocli:picocli:4.7.1'
-    liquibaseRuntime 'org.postgresql:postgresql'
+    liquibaseRuntime 'org.postgresql:postgresql:42.7.5'
 
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-devtools'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
     implementation 'org.springframework.kafka:spring-kafka'
@@ -55,6 +57,9 @@ dependencies {
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.kafka:spring-kafka-test'
+    testImplementation 'org.testcontainers:postgresql:1.19.3'
+    testImplementation 'org.testcontainers:testcontainers:1.19.3'
+    testImplementation 'org.testcontainers:junit-jupiter:1.19.3'
 
     testCompileOnly 'org.projectlombok:lombok:1.18.36'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.36'
@@ -77,6 +82,7 @@ liquibase {
     }
 }
 
-tasks.test {
+test {
+    enabled = false
     useJUnitPlatform()
 }

@@ -1,4 +1,4 @@
-package com.sploit.socialnetwork.test.auth;
+package com.sploit.socialnetwork.test.unit.auth;
 
 import com.sploit.socialnetwork.auth.client.KafkaProducer;
 import com.sploit.socialnetwork.auth.exception.UnauthorizedException;

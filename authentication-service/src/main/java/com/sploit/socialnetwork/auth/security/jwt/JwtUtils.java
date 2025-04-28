@@ -2,11 +2,8 @@ package com.sploit.socialnetwork.auth.security.jwt;
 
 import com.sploit.socialnetwork.auth.models.User;
 import com.sploit.socialnetwork.auth.security.services.UserDetailsImpl;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
@@ -26,7 +23,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.time.Instant;
 import java.util.Date;
-import java.util.UUID;
 
 @Slf4j
 @Component
@@ -39,10 +35,10 @@ public class JwtUtils {
     private Long jwtExpirationMs;
 
     @Value("${jwt.cookie-name}")
-    private String jwtCookie;
+    private String jwtCookieName;
 
     @Value("${jwt.refresh-cookie-name}")
-    private String jwtRefreshToken;
+    private String jwtRefreshTokenName;
 
     private final ResourceLoader resourceLoader;
 
@@ -53,35 +49,35 @@ public class JwtUtils {
 
     public ResponseCookie generateJwtCookie(UserDetailsImpl userPrincipal) {
         String jwt = generateTokenFromId(userPrincipal.getUsername());
-        return generateCookie(jwtCookie, jwt, "/api");
+        return generateCookie(jwtCookieName, jwt, "/api");
     }
 
     public ResponseCookie generateJwtCookie(User user) {
         String jwt = generateTokenFromId(user.getId().toString());
-        return generateCookie(jwtCookie, jwt, "/api");
+        return generateCookie(jwtCookieName, jwt, "/api");
     }
 
     public ResponseCookie generateRefreshJwtCookie(String refreshToken) {
-        return generateCookie(jwtRefreshToken, refreshToken, "api/auth/refresh");
+        return generateCookie(jwtRefreshTokenName, refreshToken, "/api/auth/refresh");
     }
 
     public String getJwtRefreshFromCookies(HttpServletRequest request) {
-        return getCookieValueByName(request, jwtRefreshToken);
+        return getCookieValueByName(request, jwtRefreshTokenName);
     }
 
     public String getJwtFromCookie(HttpServletRequest request) {
-        return getCookieValueByName(request, jwtCookie);
+        return getCookieValueByName(request, jwtCookieName);
     }
 
     public ResponseCookie getCleanJwtCookie() {
-        return ResponseCookie.from(jwtCookie).path("/api").build();
+        return ResponseCookie.from(jwtCookieName).path("/api").build();
     }
 
     public ResponseCookie getCleanRefreshJwtCookie() {
-        return ResponseCookie.from(jwtRefreshToken).path("/api/auth/refresh").build();
+        return ResponseCookie.from(jwtRefreshTokenName).path("/api/auth/refresh").build();
     }
 
-    public String getUsernameFromJwtToken(String token) {
+    public String getIdFromJwtToken(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key())
                 .build()
@@ -110,17 +106,9 @@ public class JwtUtils {
         try {
             Jwts.parserBuilder().setSigningKey(key()).build().parse(token);
             return true;
-        } catch (MalformedJwtException e) {
-            log.error("Invalid JWT token", e);
-        } catch (ExpiredJwtException e) {
-            log.error("Expired JWT token", e);
-        } catch (UnsupportedJwtException e) {
-            log.error("Unsupported JWT token", e);
-        } catch (IllegalArgumentException e) {
-            log.error("JWT claims string is empty", e);
+        } catch (Exception e) {
+            return false;
         }
-
-        return false;
     }
 
     public String generateTokenFromId(String id) {

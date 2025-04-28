@@ -33,9 +33,9 @@ jwt:
   expiration-millis:
     86400000
   cookie-name:
-    sploit-jwt
+    jwt
   refresh-cookie-name:
-    sploit-jwt
+    refresh-token
   refresh-expiration-millis:
     86400000
 server:
@@ -44,3 +44,4 @@ server:
 logging:
   level:
     hibernate: DEBUG
+    com.sploit.socialnetwork: debug

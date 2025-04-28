@@ -1,0 +1,11 @@
+eureka:
+  client:
+    enabled: false
+    register-with-eureka: false
+    fetch-registry: false
+logging:
+  level:
+#    root: debug
+#    org.springframework.web: debug
+    org.hibernate.sql: debug
+    org.hibernate.type.descriptor.sql: trace

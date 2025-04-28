@@ -7,6 +7,7 @@ import com.sploit.socialnetwork.auth.exception.AccessException;
 import com.sploit.socialnetwork.auth.exception.RoleNotFoundException;
 import com.sploit.socialnetwork.auth.exception.TokenRefreshException;
 import com.sploit.socialnetwork.auth.exception.UnauthorizedException;
+import com.sploit.socialnetwork.auth.exception.UserAlreadyExists;
 import com.sploit.socialnetwork.auth.exception.UserNotFoundException;
 import com.sploit.socialnetwork.auth.models.RefreshToken;
 import com.sploit.socialnetwork.auth.models.Role;
@@ -26,6 +27,7 @@ import com.sploit.socialnetwork.auth.security.services.RefreshTokenService;
 import com.sploit.socialnetwork.auth.security.services.UserDetailsImpl;
 import com.sploit.socialnetwork.auth.security.jwt.JwtUtils;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -54,6 +56,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class AuthService {
 
     private final PasswordEncoder encoder;
@@ -69,6 +72,7 @@ public class AuthService {
     private final RefreshTokenService refreshTokenService;
 
     private final KafkaProducer kafkaProducer;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public AuthService(PasswordEncoder passwordEncoder,
@@ -85,10 +89,16 @@ public class AuthService {
         this.jwtUtils = jwtUtil;
         this.refreshTokenService = refreshTokenService;
         this.kafkaProducer = kafkaProducer;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional
     public void registerUser(SignUpRequest signUpRequest) {
+
+        userRepository.findByEmail(signUpRequest.getEmail()).ifPresent(user -> {
+            throw new UserAlreadyExists(user.getEmail());
+        });
+
        User user = User.builder()
                 .password(encoder.encode(signUpRequest.getPassword()))
                 .email(signUpRequest.getEmail())
@@ -127,8 +137,9 @@ public class AuthService {
 
         if (user.getStatus().equals(Status.BLOCKED)) throw new AccessException(user.getId().toString());
 
-        Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(user.getId(), request.getPassword()));
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(user.getId(), request.getPassword())
+        );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -148,6 +159,8 @@ public class AuthService {
 
         userRepository.save(user);
 
+        log.info("Authenticated: {}", SecurityContextHolder.getContext().getAuthentication());
+
         return LoginResponse.builder()
                 .email(user.getEmail())
                 .roles(roles)
@@ -166,6 +179,8 @@ public class AuthService {
 
         UUID id = ((UserDetailsImpl) principal).getId();
         refreshTokenService.deleteByUserId(id);
+
+        SecurityContextHolder.clearContext();
 
         ResponseCookie responseCookie = jwtUtils.getCleanJwtCookie();
         ResponseCookie jwtRefreshCookie = jwtUtils.getCleanRefreshJwtCookie();

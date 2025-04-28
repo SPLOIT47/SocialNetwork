@@ -1,6 +1,7 @@
 package com.sploit.socialnetwork.auth.exception;
 
 import com.sploit.socialnetwork.auth.payload.response.ApiError;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -27,9 +28,16 @@ public class GlobalExceptionHandler {
         return buildResponseEntity(apiError);
     }
 
+    @ExceptionHandler(UserAlreadyExists.class)
+    public ResponseEntity<ApiError> handleUserAlreadyExists(UserAlreadyExists userAlreadyExists) {
+        ApiError apiError = new ApiError(HttpStatus.CONFLICT, userAlreadyExists.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleException(Exception e) {
-        ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        String stackTrace = ExceptionUtils.getStackTrace(e);
+        ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, stackTrace);
         return buildResponseEntity(apiError);
     }
 

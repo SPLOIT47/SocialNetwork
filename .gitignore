@@ -27,6 +27,7 @@ hs_err_pid*
 replay_pid*
 
 #keys
+keys
 .env
 
 #Java files

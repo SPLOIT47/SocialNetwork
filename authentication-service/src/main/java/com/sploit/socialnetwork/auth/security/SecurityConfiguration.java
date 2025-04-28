@@ -20,6 +20,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.util.AntPathMatcher;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -53,7 +58,6 @@ public class SecurityConfiguration {
 
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
     }
 
@@ -69,7 +73,8 @@ public class SecurityConfiguration {
 
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
-        return new AuthTokenFilter(jwtUtils, userDetailsService);
+        AuthTokenFilter filter = new AuthTokenFilter(jwtUtils, userDetailsService);
+        return filter;
     }
 
     @Bean
