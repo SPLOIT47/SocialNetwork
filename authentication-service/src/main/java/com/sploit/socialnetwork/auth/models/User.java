@@ -25,16 +25,13 @@ public class User {
     @Column(name = "id")
     private UUID id;
 
-    @Column(name = "username")
-    private String username;
-
     @Column(name = "password")
     private String password;
 
     @Column(name = "email")
     private String email;
 
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.PERSIST}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.PERSIST}, fetch = FetchType.LAZY)
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),

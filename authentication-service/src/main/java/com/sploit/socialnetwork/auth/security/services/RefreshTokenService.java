@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
@@ -29,16 +30,21 @@ public class RefreshTokenService {
          return refreshTokenRepository.findByToken(token);
     }
 
+    @Transactional
     public RefreshToken createRefreshToken(UUID id) {
-        return RefreshToken.builder()
+        RefreshToken token =  RefreshToken.builder()
                 .refreshToken(UUID.randomUUID().toString())
-                .expiryDate(Instant.now().plusMillis(refreshTokenDurationMs))
+                .expiryDate(Timestamp.from(Instant.now().plusMillis(refreshTokenDurationMs)))
                 .userId(id)
                 .build();
+
+        refreshTokenRepository.add(token);
+
+        return token;
     }
 
     public RefreshToken verifyExpiration(RefreshToken refreshToken) {
-        if (refreshToken.getExpiryDate().compareTo(Instant.now()) < 0) {
+        if (refreshToken.getExpiryDate().compareTo(Timestamp.from(Instant.now())) < 0) {
             refreshTokenRepository.delete(refreshToken);
             throw new TokenRefreshException(refreshToken.getRefreshToken(),
                     "Refresh token was expired. Please make a new signin request");

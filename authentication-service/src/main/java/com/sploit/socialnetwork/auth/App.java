@@ -10,7 +10,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import java.util.Objects;
 
 @SpringBootApplication
-@EnableFeignClients
 @EntityScan("com.sploit.socialnetwork.auth.models")
 @EnableJpaRepositories("com.sploit.socialnetwork.auth.repository")
 public class App {

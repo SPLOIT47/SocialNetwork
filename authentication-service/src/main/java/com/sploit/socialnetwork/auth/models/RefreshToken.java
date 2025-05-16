@@ -23,8 +23,8 @@ import java.util.UUID;
 @Builder
 public class RefreshToken {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+    @Builder.Default
+    private UUID id = UUID.randomUUID();
 
     @Column(nullable = false)
     private UUID userId;
@@ -33,5 +33,5 @@ public class RefreshToken {
     private String refreshToken;
 
     @Column(nullable = false)
-    private Instant expiryDate;
+    private Timestamp expiryDate;
 }

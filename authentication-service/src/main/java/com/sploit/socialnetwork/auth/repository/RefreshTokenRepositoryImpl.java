@@ -24,7 +24,7 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
 
     @Override
     public void add(RefreshToken refreshToken) {
-        redisTemplate.opsForHash().put(HASH_KEY, refreshToken.getId(), refreshToken);
+        redisTemplate.opsForHash().put(HASH_KEY, refreshToken.getId().toString(), refreshToken);
 
         String userIdKey = getUserIndexKey(refreshToken.getUserId());
         redisTemplate.opsForSet().add(userIdKey, refreshToken.getId());

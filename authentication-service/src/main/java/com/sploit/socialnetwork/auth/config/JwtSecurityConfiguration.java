@@ -34,7 +34,7 @@ public class JwtSecurityConfiguration {
     @Value("${jwt.private-key-location}")
     private String privateKeyLocation;
 
-    @Autowired // do not use field injection
+    @Autowired
     private ResourceLoader resourceLoader;
 
     @Bean

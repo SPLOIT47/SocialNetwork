@@ -2,19 +2,15 @@ spring:
   application:
     name: auth-service
   datasource:
-#    url: jdbc:postgresql://${DATABASE_URL}
-#    username: ${DATABASE_USER}
-#    password: ${DATABASE_PASSWORD}
-    url: jdbc:postgresql://localhost:55100/postgres
-    username: postgres
-    password: postgres
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USER}
+    password: ${DATABASE_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: none
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-    show-sql: true
   eureka:
     client:
       service-url:
@@ -22,6 +18,7 @@ spring:
   kafka:
     bootstrap-servers:
       localhost:29092
+
   data:
     redis:
       host: localhost
@@ -31,14 +28,14 @@ jwt:
     classpath:keys/public.key
   private-key-location:
     classpath:keys/private.key
-  jwt-secret:
+  jwt-secret-location:
     classpath:keys/jwtSecret.key
   expiration-millis:
     86400000
   cookie-name:
-    sploit-jwt
+    jwt
   refresh-cookie-name:
-    sploit-jwt
+    refresh-token
   refresh-expiration-millis:
     86400000
 server:
@@ -47,3 +44,4 @@ server:
 logging:
   level:
     hibernate: DEBUG
+    com.sploit.socialnetwork: debug
