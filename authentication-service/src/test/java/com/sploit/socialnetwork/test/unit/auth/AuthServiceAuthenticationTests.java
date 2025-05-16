@@ -114,7 +114,7 @@ public class AuthServiceAuthenticationTests {
         RefreshToken refreshToken = RefreshToken.builder()
                 .id(UUID.randomUUID())
                 .refreshToken("mockRefreshTokenValue")
-                .expiryDate(Instant.ofEpochSecond(10))
+                .expiryDate(Timestamp.from(Instant.now().plusSeconds(100)))
                 .build();
 
         Mockito.lenient().when(refreshTokenService.createRefreshToken(Mockito.any(UUID.class))).thenReturn(refreshToken);

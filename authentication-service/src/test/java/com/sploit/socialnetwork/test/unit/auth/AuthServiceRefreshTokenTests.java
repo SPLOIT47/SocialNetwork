@@ -21,13 +21,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Testcontainers
 @ExtendWith(MockitoExtension.class)
 public class AuthServiceRefreshTokenTests {
 
@@ -74,7 +77,7 @@ public class AuthServiceRefreshTokenTests {
         RefreshToken refreshToken = RefreshToken.builder()
                 .userId(fakeUser.getId())
                 .refreshToken(FAKE_REFRESH_TOKEN)
-                .expiryDate(Instant.now().plusSeconds(3600))
+                .expiryDate(Timestamp.from(Instant.now().plusSeconds(3600)))
                 .build();
 
         Mockito.when(jwtUtils.getJwtRefreshFromCookies(Mockito.any(HttpServletRequest.class)))
@@ -102,7 +105,7 @@ public class AuthServiceRefreshTokenTests {
         RefreshToken refreshToken = RefreshToken.builder()
                 .userId(fakeUser.getId())
                 .refreshToken(FAKE_REFRESH_TOKEN)
-                .expiryDate(Instant.now().plusSeconds(3600))
+                .expiryDate(Timestamp.from(Instant.now().plusSeconds(3600)))
                 .build();
 
         Mockito.lenient().when(jwtUtils.getJwtRefreshFromCookies(Mockito.any(HttpServletRequest.class)))
